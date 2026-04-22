@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MGFC Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#252525;
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;
   --acc:#e8ff47;--blue:#47d9ff;--green:#4ade80;--red:#ff4545;--orange:#ff8c42;--purple:#c084fc;
   --text:#f0f0f0;--muted:#666;--border:#252525;
   font-family:'DM Sans',sans-serif;
@@ -19,22 +18,23 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer}
 input,textarea,select{font-family:'DM Sans',sans-serif;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;outline:none;font-size:13px;width:100%}
 input:focus,textarea:focus,select:focus{border-color:var(--acc)}
 select option{background:var(--bg2)}
-.screen{display:none;min-height:100vh}
-.screen.show{display:block}
+.screen{display:none;min-height:100vh}.screen.show{display:block}
 /* LOGIN */
-#ls{display:flex;align-items:center;justify-content:center;padding:40px 20px;background:var(--bg)}
+#ls{display:flex;align-items:center;justify-content:center;padding:40px 20px;min-height:100vh}
 .lb{width:100%;max-width:360px}
 .ll{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--acc)}
 .ll span{color:var(--text)}
-.ls{font-size:13px;color:var(--muted);margin-bottom:28px}
+.lsub{font-size:13px;color:var(--muted);margin-bottom:28px}
 .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;margin-top:12px}
 .lbtn{width:100%;margin-top:18px;background:var(--acc);color:#0a0a0a;border:none;font-size:14px;font-weight:500;padding:13px;border-radius:10px}
 .lbtn:hover{opacity:.9}
-.err{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-.loading-overlay{position:fixed;inset:0;background:rgba(10,10,10,.9);display:flex;align-items:center;justify-content:center;z-index:999;display:none}
-.loading-overlay.show{display:flex}
-.loading-spinner{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--acc);animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.lerr{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
+/* LOADER */
+.loader{position:fixed;inset:0;background:rgba(10,10,10,.92);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.loader.show{display:flex}
+.lspin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lmsg{font-size:13px;color:var(--muted)}
 /* TOPNAV */
 .tnav{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);background:rgba(10,10,10,.97);position:sticky;top:0;z-index:100}
 .tlogo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--acc)}
@@ -50,7 +50,7 @@ select option{background:var(--bg2)}
 .btd{width:6px;height:6px;border-radius:50%;background:currentColor}
 .btd.blink{animation:bl 1s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
-.av{width:28px;height:28px;border-radius:50%;background:rgba(232,255,71,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--acc);cursor:pointer}
+.av{width:28px;height:28px;border-radius:50%;background:rgba(232,255,71,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--acc)}
 .xb{background:none;border:none;color:var(--muted);font-size:12px}
 .pc{padding:18px;max-width:800px;margin:0 auto}
 /* CARDS */
@@ -68,7 +68,7 @@ select option{background:var(--bg2)}
 .sh-t{font-family:'Bebas Neue',sans-serif;font-size:22px}
 .sh-s{font-size:12px;color:var(--muted);margin-top:2px}
 .fcbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
-.fcbar .hrt{font-size:14px;animation:hb .8s ease-in-out infinite}
+.hrt{font-size:14px;animation:hb .8s ease-in-out infinite}
 @keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 .erow{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
 .erow:last-child{border-bottom:none}
@@ -78,7 +78,7 @@ select option{background:var(--bg2)}
 .ename{font-size:13px;font-weight:500}
 .edet{font-size:11px;color:var(--muted);margin-top:2px}
 .enote{font-size:10px;color:var(--blue);margin-top:2px;font-style:italic}
-.sbtn{width:100%;background:var(--acc);color:#0a0a0a;border:none;font-size:13px;font-weight:500;padding:12px;border-radius:9px;margin-top:2px}
+.sbtn{width:100%;background:var(--acc);color:#0a0a0a;border:none;font-size:13px;font-weight:500;padding:12px;border-radius:9px}
 .sbtn:hover{opacity:.9}
 .cbox{padding:14px 16px;background:rgba(71,217,255,.04);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.7}
 /* LIVE */
@@ -131,7 +131,7 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .er2.fin{opacity:.4}
 .er2ico{width:28px;height:28px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .er2n{font-size:11px;flex:1;line-height:1.3}
-.er2d{width:6px;height:6px;border-radius:50%;background:var(--bg4);flex-shrink:0}
+.er2d{width:6px;height:6px;border-radius:50%;background:var(--bg);flex-shrink:0}
 .er2d.d{background:var(--green)}.er2d.a{background:var(--acc)}
 .actbtn{margin:7px 8px;background:var(--acc);color:#0a0a0a;border:none;font-size:12px;font-weight:500;padding:11px;border-radius:9px;width:calc(100% - 16px)}
 .actbtn:hover{opacity:.9}
@@ -140,9 +140,6 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .timr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .timv{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted)}
 /* COACH */
-.cgtabs{display:flex;gap:5px;margin-bottom:16px}
-.cgtab{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:6px 14px;border-radius:20px;transition:.2s}
-.cgtab:hover,.cgtab.on{border-color:var(--acc);color:var(--acc);background:rgba(232,255,71,.05)}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
 .cc2{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:.2s}
 .cc2:hover,.cc2.sel{border-color:var(--acc)}
@@ -165,33 +162,31 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .savebtn{background:var(--acc);color:#0a0a0a;border:none;font-size:12px;font-weight:500;padding:9px 18px;border-radius:9px;flex-shrink:0}
 .nb{height:70px;resize:none;font-size:12px;margin-top:7px}
 .ssel{margin-bottom:10px;font-size:12px}
-.mbadge{display:inline-block;background:rgba(232,255,71,.1);color:var(--acc);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin-left:6px}
+.mbadge{display:inline-block;background:rgba(232,255,71,.1);color:var(--acc);font-size:10px;padding:2px 8px;border-radius:20px;margin-left:6px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#0a0a0a;font-size:13px;font-weight:500;padding:10px 24px;border-radius:20px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loader"><div class="loading-spinner">MGFC...</div></div>
+<div class="loader" id="loader"><div class="lspin"></div><div class="lmsg" id="lmsg">Chargement...</div></div>
 <div class="toast" id="toast"></div>
 
-<!-- LOGIN -->
 <div class="screen show" id="ls">
   <div style="display:flex;align-items:center;justify-content:center;padding:50px 20px;min-height:100vh">
     <div class="lb">
       <div class="ll">MGFC<span> Pro</span></div>
-      <div class="ls">Muscu Guidée par la Fréquence Cardiaque</div>
+      <div class="lsub">Muscu Guidée par la Fréquence Cardiaque</div>
       <div class="lbl">Email</div>
       <input type="email" id="lem" placeholder="votre@email.com">
       <div class="lbl">Mot de passe</div>
-      <input type="password" id="lpw" placeholder="••••••••">
-      <div class="err" id="lerr"></div>
+      <input type="password" id="lpw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="lerr" id="lerr"></div>
       <button class="lbtn" onclick="doLogin()">Se connecter</button>
     </div>
   </div>
 </div>
 
-<!-- APP -->
 <div class="screen" id="as">
   <nav class="tnav">
     <div class="tlogo">MGFC<span> Pro</span></div>
@@ -212,82 +207,108 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 </div>
 
 <script>
-// =========== SUPABASE CONFIG ===========
-const SUPABASE_URL = 'https://ynzmdsuodmvlvljvfbzw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_uOjfU8EwOHUcBb_sy-HagQ_Aeu056d6';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// =========== CONFIG SUPABASE ===========
+const SB_URL = 'https://ynzmdsuodmvlvljvfbzw.supabase.co';
+const SB_KEY = 'sb_publishable_uOjfU8EwOHUcBb_sy-HagQ_Aeu056d6';
 
-// COACH credentials (hardcoded — pas dans Supabase)
-const COACH = {email:'thomas.lombard@sfr.fr', pwd:'mgfc2026coach', nom:'Coach', prenom:'MGFC', initiale:'C', role:'coach'};
+// Appels API directs via fetch (compatible nouvelle clé Supabase)
+async function sbSelect(table, filters={}, order=null){
+  let url = `${SB_URL}/rest/v1/${table}?select=*`;
+  for(const [k,v] of Object.entries(filters)) url += `&${k}=eq.${encodeURIComponent(v)}`;
+  if(order) url += `&order=${order}`;
+  const r = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}});
+  return await r.json();
+}
+async function sbUpdate(table, id, data){
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body: JSON.stringify(data)
+  });
+  return r.ok;
+}
+async function sbInsert(table, data){
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body: JSON.stringify(data)
+  });
+  return await r.json();
+}
+async function sbDelete(table, id){
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method:'DELETE',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+  return r.ok;
+}
 
 // =========== STATE ===========
-let CU = null;
-let clients = [];
-let seances = [];
-let exercices = [];
-let selSess = 0;
-let livePhase = 'idle', liveExIdx = 0, liveSet = 0, liveSets = [], timerIv = null, timerSec = 0, liveFC = 80;
-let liveSeances = [], liveExos = [];
-let coachSelIdx = null, coachSessIdx = 0, coachClientData = {};
+const COACH = {email:'thomas.lombard@sfr.fr', pwd:'mgfc2026coach', nom:'Lombard', prenom:'Thomas', initiale:'T', role:'coach'};
+let CU=null, allClients=[], selSess=0;
+let livePhase='idle', liveExIdx=0, liveSet=0, liveSets=[], timerIv=null, timerSec=0, liveFC=80;
+let coachSelIdx=null, coachSessIdx=0, coachCache={};
 
-function showLoader(v){document.getElementById('loader').classList.toggle('show',v);}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function loader(show, msg='Chargement...'){
+  document.getElementById('loader').classList.toggle('show',show);
+  document.getElementById('lmsg').textContent=msg;
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
 
 // =========== LOGIN ===========
 async function doLogin(){
-  const email = document.getElementById('lem').value.trim();
-  const pwd   = document.getElementById('lpw').value.trim();
-  document.getElementById('lerr').textContent = '';
-  if(!email||!pwd){document.getElementById('lerr').textContent='Remplis tous les champs';return;}
+  const email=document.getElementById('lem').value.trim();
+  const pwd=document.getElementById('lpw').value.trim();
+  const err=document.getElementById('lerr');
+  err.textContent='';
+  if(!email||!pwd){err.textContent='Remplis tous les champs';return;}
 
-  // Coach login
-  if(email === COACH.email && pwd === COACH.pwd){
-    CU = COACH;
-    await loadAllClients();
-    initApp();
-    return;
+  // Coach
+  if(email===COACH.email && pwd===COACH.pwd){
+    CU={...COACH};
+    loader(true,'Chargement des clients...');
+    allClients = await sbSelect('clients',{},'prenom');
+    loader(false);
+    initApp(); return;
   }
 
-  // Client login — check email in DB, pwd simple
-  showLoader(true);
-  const {data,error} = await sb.from('clients').select('*').eq('email',email).single();
-  showLoader(false);
-  if(error||!data){document.getElementById('lerr').textContent='Email introuvable';return;}
+  // Client
+  loader(true,'Connexion...');
+  const data = await sbSelect('clients',{email});
+  loader(false);
+  if(!data||!data.length){err.textContent='Email introuvable';return;}
+  const c=data[0];
+  const expectedPwd = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+c.id.slice(0,4);
+  // Accepte aussi prenom+123 pour simplicité
+  const pwd2 = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+'123';
+  if(pwd!==expectedPwd && pwd!==pwd2){err.textContent='Mot de passe incorrect';return;}
 
-  // Simple password check (prenom lowercase + 123)
-  const expectedPwd = data.prenom.toLowerCase().replace(/\s/g,'') + '123';
-  if(pwd !== expectedPwd){document.getElementById('lerr').textContent='Mot de passe incorrect';return;}
-
-  CU = {...data, role:'client', initiale: data.prenom[0].toUpperCase()};
-  await loadClientData(CU.id);
-  initApp();
-}
-
-async function loadAllClients(){
-  const {data} = await sb.from('clients').select('*').order('prenom');
-  clients = data || [];
-}
-
-async function loadClientData(clientId){
-  const [s, e] = await Promise.all([
-    sb.from('seances').select('*').eq('client_id', clientId).order('ordre'),
-    sb.from('exercices').select('*').order('ordre')
+  CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
+  loader(true,'Chargement du programme...');
+  const [seances, exos] = await Promise.all([
+    sbSelect('seances',{client_id:c.id},'ordre'),
+    sbSelect('exercices',{},'ordre')
   ]);
-  seances = s.data || [];
-  exercices = e.data || [];
+  loader(false);
+  window._seances=seances||[];
+  window._exos=exos||[];
+  initApp();
 }
 
 function initApp(){
   document.getElementById('ls').classList.remove('show');
   document.getElementById('as').classList.add('show');
-  document.getElementById('avp').textContent = CU.initiale;
+  document.getElementById('avp').textContent=CU.initiale;
   buildNav();
-  if(CU.role === 'client') showPage('prog');
-  else { renderCoach(); showPage('coach'); }
+  if(CU.role==='client') showPage('prog');
+  else{renderCoach();showPage('coach');}
 }
 
 function logout(){
-  CU=null; clients=[]; seances=[]; exercices=[];
+  CU=null;allClients=[];window._seances=[];window._exos=[];
   document.getElementById('as').classList.remove('show');
   document.getElementById('ls').classList.add('show');
   document.getElementById('lem').value='';
@@ -296,61 +317,50 @@ function logout(){
 
 // =========== NAV ===========
 function buildNav(){
-  const tabs = CU.role==='coach'
-    ? [{id:'coach',l:'Tableau de bord'},{id:'prog',l:'Démo programme'}]
-    : [{id:'prog',l:'Mon Programme'},{id:'suivi',l:'Mon Suivi'}];
-  document.getElementById('ntabs').innerHTML = tabs.map(t=>`<button class="ntab" id="nt-${t.id}" onclick="showPage('${t.id}')">${t.l}</button>`).join('');
+  const tabs=CU.role==='coach'
+    ?[{id:'coach',l:'Tableau de bord'},{id:'prog',l:'Démo'}]
+    :[{id:'prog',l:'Mon Programme'},{id:'suivi',l:'Mon Suivi'}];
+  document.getElementById('ntabs').innerHTML=tabs.map(t=>`<button class="ntab" id="nt-${t.id}" onclick="showPage('${t.id}')">${t.l}</button>`).join('');
 }
 function showPage(id){
   ['pgProg','pgLive','pgSuivi','pgCoach'].forEach(p=>document.getElementById(p).style.display='none');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
   const m={prog:'pgProg',live:'pgLive',suivi:'pgSuivi',coach:'pgCoach'};
-  if(m[id]) document.getElementById(m[id]).style.display='block';
-  const n=document.getElementById('nt-'+id); if(n) n.classList.add('on');
-  if(id==='prog') renderProg();
-  if(id==='suivi') renderSuivi();
+  if(m[id])document.getElementById(m[id]).style.display='block';
+  const n=document.getElementById('nt-'+id);if(n)n.classList.add('on');
+  if(id==='prog')renderProg();
+  if(id==='suivi')renderSuivi();
 }
 
 // =========== PROGRAMME ===========
 async function renderProg(){
-  const pg = document.getElementById('pgProg');
-  pg.innerHTML = '<div class="pc" style="padding-top:30px;text-align:center;color:var(--muted)">Chargement...</div>';
-
-  let clientData, clientSeances, clientExos;
-  if(CU.role === 'client'){
-    clientData = CU;
-    clientSeances = seances;
-    clientExos = exercices;
+  const pg=document.getElementById('pgProg');
+  pg.innerHTML='<div class="pc" style="padding-top:30px;text-align:center;color:var(--muted)">Chargement...</div>';
+  let clientData,clientSeances,clientExos;
+  if(CU.role==='client'){
+    clientData=CU; clientSeances=window._seances||[]; clientExos=window._exos||[];
   } else {
-    // Coach: use first client as demo
-    if(!clients.length) await loadAllClients();
-    clientData = clients[0];
-    const [s,e] = await Promise.all([
-      sb.from('seances').select('*').eq('client_id', clientData.id).order('ordre'),
-      sb.from('exercices').select('*').order('ordre')
-    ]);
-    clientSeances = s.data||[];
-    clientExos = e.data||[];
+    if(!allClients.length) allClients=await sbSelect('clients',{},'prenom');
+    clientData=allClients[0];
+    if(!clientData){pg.innerHTML='<div class="pc">Aucun client</div>';return;}
+    loader(true,'Chargement...');
+    const [s,e]=await Promise.all([sbSelect('seances',{client_id:clientData.id},'ordre'),sbSelect('exercices',{},'ordre')]);
+    loader(false);
+    clientSeances=s||[]; clientExos=e||[];
   }
-
-  const palH = clientData.palier_haut || Math.round(clientData.fc_max*0.8);
-  const palB = clientData.palier_bas  || Math.round(clientData.fc_max*0.6);
-  const cols = Math.min(clientSeances.length, 5);
-
-  const cards = clientSeances.map((s,i)=>`
+  const palH=clientData.palier_haut||Math.round(clientData.fc_max*.8);
+  const palB=clientData.palier_bas||Math.round(clientData.fc_max*.6);
+  const cols=Math.min(clientSeances.length,5);
+  const cards=clientSeances.map((s,i)=>`
     <div class="wcard ${i===selSess?'sel':''}" onclick="selS(${i})">
-      <div class="wd">${s.jour}</div>
-      <div class="wi">${s.icone}</div>
+      <div class="wd">${s.jour}</div><div class="wi">${s.icone}</div>
       <div class="wn">${s.nom}</div>
       <div class="wtag ${s.type==='muscu'?'tm':'tc'}">${s.type==='muscu'?'Muscu MGFC':'Cardio FC'}</div>
     </div>`).join('');
-
-  const s = clientSeances[selSess];
+  const s=clientSeances[selSess];
   if(!s){pg.innerHTML='<div class="pc">Aucune séance</div>';return;}
-
-  const sexos = clientExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
-
-  const exRows = sexos.map((ex,j)=>`
+  const sexos=clientExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
+  const exRows=sexos.map((ex,j)=>`
     <div class="erow">
       <div class="enum">${j+1}</div>
       <div class="eico">${ex.icone||'💪'}</div>
@@ -360,8 +370,7 @@ async function renderProg(){
         ${ex.note?`<div class="enote">${ex.note}</div>`:''}
       </div>
     </div>`).join('');
-
-  pg.innerHTML = `<div class="pc">
+  pg.innerHTML=`<div class="pc">
     <div style="margin-bottom:14px">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">${clientData.cycle||''}</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:32px">Bonjour ${clientData.prenom} 👋</div>
@@ -373,37 +382,26 @@ async function renderProg(){
         <div><div class="sh-t">${s.nom}</div><div class="sh-s">${s.jour} · ${sexos.length} exercices</div></div>
         <div style="text-align:right"><div style="font-size:9px;color:var(--muted);margin-bottom:2px">FC MAX</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--acc)">${clientData.fc_max} bpm</div></div>
       </div>
-      ${s.type!=='cardio'?`<div class="fcbar"><span class="hrt">♥</span><span style="margin-left:6px">Guidage FC · → <strong style="color:var(--red)">${palH} bpm</strong> arrêt · Récup → <strong style="color:var(--green)">${palB} bpm</strong> reprise</span></div>`:''}
+      ${s.type!=='cardio'?`<div class="fcbar"><span class="hrt">♥</span><span style="margin-left:6px">→ <strong style="color:var(--red)">${palH} bpm</strong> arrêt · Récup → <strong style="color:var(--green)">${palB} bpm</strong> reprise</span></div>`:''}
       ${s.type==='cardio'&&s.cardio_note?`<div class="cbox">${s.cardio_note}</div>`:''}
       ${exRows}
-      <div style="padding:12px 14px">
-        <button class="sbtn" onclick="startLive()">▶ Démarrer cette séance en live</button>
-      </div>
+      <div style="padding:12px 14px"><button class="sbtn" onclick="startLive()">▶ Démarrer cette séance en live</button></div>
     </div>
   </div>`;
-
-  // Store for live
-  window._liveClient = clientData;
-  window._liveSeances = clientSeances;
-  window._liveExos = clientExos;
+  window._liveClient=clientData; window._liveSeances=clientSeances; window._liveExos=clientExos;
 }
-
-function selS(i){selSess=i; renderProg();}
+function selS(i){selSess=i;renderProg();}
 
 // =========== LIVE ===========
 function startLive(){
-  const c = window._liveClient;
-  const sems = window._liveSeances;
-  const allExos = window._liveExos;
-  const s = sems[selSess];
-  const sexos = allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
-  const palH = c.palier_haut || Math.round(c.fc_max*0.8);
-  const palB = c.palier_bas  || Math.round(c.fc_max*0.6);
-
-  livePhase='idle'; liveExIdx=0; liveSet=0; liveFC=80;
-  liveSets = sexos.map(ex=>Array(ex.series).fill('todo'));
-
-  document.getElementById('pgLive').innerHTML = `
+  const c=window._liveClient, sems=window._liveSeances, allExos=window._liveExos;
+  const s=sems[selSess];
+  const sexos=allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
+  const palH=c.palier_haut||Math.round(c.fc_max*.8);
+  const palB=c.palier_bas||Math.round(c.fc_max*.6);
+  livePhase='idle';liveExIdx=0;liveSet=0;liveFC=80;
+  liveSets=sexos.map(ex=>Array(ex.series).fill('todo'));
+  document.getElementById('pgLive').innerHTML=`
   <div class="lwrap">
     <div class="ll2">
       <button class="backbtn" onclick="showPage('prog')">← Retour</button>
@@ -412,10 +410,7 @@ function startLive(){
         <div class="pal pr"><div class="pll">Arrêter</div><div class="pbpm">${palH}</div><div style="font-size:8px;color:var(--muted);margin-top:2px">80% FC max</div></div>
       </div>
       <div class="fcbox">
-        <div class="timr">
-          <div class="phtag phi" id="phtag">En attente</div>
-          <div class="timv" id="ltmr">0:00</div>
-        </div>
+        <div class="timr"><div class="phtag phi" id="phtag">En attente</div><div class="timv" id="ltmr">0:00</div></div>
         <div class="fcnum" id="fcn" style="color:var(--muted)">—</div>
         <div class="fcu">bpm · fréquence cardiaque</div>
         <div class="gauge"><div class="gf" id="gf2" style="width:0%"></div></div>
@@ -433,35 +428,28 @@ function startLive(){
       </div>
     </div>
     <div class="lr">
-      <div class="lrhdr"><div class="lrht">${s.nom}</div><div id="lep" style="font-size:10px;color:var(--muted)">1/${sexos.length}</div></div>
+      <div class="lrhdr"><div class="lrht">${s.nom}</div><div id="lep" style="font-size:10px;color:var(--muted)">1/${sexos.length||'—'}</div></div>
       <div class="excur" id="lecur"></div>
       <div class="exscroll" id="lelist"></div>
       <button class="actbtn" id="actbtn" onclick="doAct()">▶ Démarrer</button>
     </div>
   </div>`;
-
-  window._liveS = s;
-  window._liveSexos = sexos;
-  window._liveC = c;
-  renderLiveEx();
-  showPage('live');
+  window._liveS=s; window._liveSexos=sexos; window._liveC=c;
+  renderLiveEx(); showPage('live');
   document.getElementById('nt-prog')?.classList.remove('on');
 }
-
 function renderLiveEx(){
-  const sexos = window._liveSexos||[];
-  const s = window._liveS;
+  const sexos=window._liveSexos||[];
   if(!sexos.length){
-    document.getElementById('lecur').innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Séance cardio — pas d\'exercice de musculation</div>';
+    document.getElementById('lecur').innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Séance cardio</div>';
     document.getElementById('lelist').innerHTML='';
     document.getElementById('actbtn').textContent='Cardio en cours';
-    document.getElementById('actbtn').disabled=true;
-    return;
+    document.getElementById('actbtn').disabled=true; return;
   }
-  const ex = sexos[liveExIdx]; if(!ex) return;
-  const pills = (liveSets[liveExIdx]||[]).map((st,i)=>{
-    const c2=st==='done'?'d':i===liveSet?'a':'t';
-    return `<div class="sp ${c2}">${i+1}</div>`;
+  const ex=sexos[liveExIdx]; if(!ex) return;
+  const pills=(liveSets[liveExIdx]||[]).map((st,i)=>{
+    const c=st==='done'?'d':i===liveSet?'a':'t';
+    return `<div class="sp ${c}">${i+1}</div>`;
   }).join('');
   document.getElementById('lecur').innerHTML=`
     <div class="exil">${ex.icone||'💪'}</div>
@@ -481,11 +469,9 @@ function renderLiveEx(){
   }).join('');
   updateActBtn();
 }
-
 function updateActBtn(){
   const btn=document.getElementById('actbtn'); if(!btn) return;
-  const c=window._liveC;
-  const palB=c.palier_bas||Math.round(c.fc_max*0.6);
+  const palB=window._liveC?.palier_bas||Math.round((window._liveC?.fc_max||185)*.6);
   if(livePhase==='idle'){btn.textContent='▶ Démarrer la série';btn.disabled=false;}
   else if(livePhase==='serie'){btn.textContent='Surveille ta FC...';btn.disabled=true;}
   else if(livePhase==='recup'){
@@ -493,7 +479,6 @@ function updateActBtn(){
     else{btn.textContent='⏳ Attends '+palB+' bpm...';btn.disabled=true;}
   }
 }
-
 function doAct(){
   if(livePhase==='idle'||livePhase==='recup'){
     livePhase='serie';
@@ -501,34 +486,27 @@ function doAct(){
     renderLiveEx(); onFC(liveFC,false);
   }
 }
-
 function onFC(val,fromSlider){
-  if(fromSlider){
-    const sv=document.getElementById('sv3'); if(sv) sv.textContent=val;
-  }
+  if(fromSlider){const sv=document.getElementById('sv3');if(sv)sv.textContent=val;}
   liveFC=val;
   const c=window._liveC; if(!c) return;
-  const s=window._liveS;
-  const sexos=window._liveSexos||[];
-  const max=c.fc_max, palB=c.palier_bas||Math.round(max*0.6), palH=c.palier_haut||Math.round(max*0.8);
+  const s=window._liveS, sexos=window._liveSexos||[];
+  const max=c.fc_max, palB=c.palier_bas||Math.round(max*.6), palH=c.palier_haut||Math.round(max*.8);
   const pct=Math.min(Math.round(val/max*100),100);
   const ne=document.getElementById('fcn'),gf=document.getElementById('gf2'),al=document.getElementById('lval'),pt=document.getElementById('phtag');
   if(!ne) return;
   ne.textContent=val; gf.style.width=pct+'%';
-
   if(s.type==='cardio'){
     const inZ=val>=palB&&val<=Math.round(max*.70);
-    gf.style.background=inZ?'var(--blue)':'var(--orange)';
-    ne.style.color=inZ?'var(--blue)':'var(--orange)';
+    gf.style.background=inZ?'var(--blue)':'var(--orange)'; ne.style.color=inZ?'var(--blue)':'var(--orange)';
     pt.className='phtag phi'; pt.textContent='Cardio FC';
-    al.className='abox ac';
-    al.textContent=inZ?'✓ Bonne zone — maintiens':'⚡ Ajuste ton allure — cible '+palB+'–'+Math.round(max*.70)+' bpm';
+    al.className='abox ac'; al.textContent=inZ?'✓ Bonne zone':'⚡ Ajuste — cible '+palB+'–'+Math.round(max*.70)+' bpm';
     return;
   }
   if(livePhase==='idle'){
     gf.style.background='var(--muted)'; ne.style.color='var(--muted)';
     pt.className='phtag phi'; pt.textContent='En attente';
-    al.className='abox ai'; al.textContent='Clique Démarrer pour lancer la série';
+    al.className='abox ai'; al.textContent='Clique Démarrer';
     renderLiveEx(); return;
   }
   if(livePhase==='serie'){
@@ -543,14 +521,13 @@ function onFC(val,fromSlider){
       if(liveExIdx>=sexos.length){
         al.className='abox ag'; al.textContent='🎉 Séance terminée — bravo !';
         document.getElementById('actbtn').textContent='✓ Terminé';
-        document.getElementById('actbtn').disabled=true;
-        stopTimer(); return;
+        document.getElementById('actbtn').disabled=true; stopTimer(); return;
       }
       startTimer(); renderLiveEx();
     } else {
       gf.style.background='var(--acc)'; ne.style.color='var(--acc)';
       pt.className='phtag phs'; pt.textContent='● En série';
-      al.className='abox aw'; al.textContent='● Continue ta série — STOP à '+palH+' bpm';
+      al.className='abox aw'; al.textContent='● Continue — STOP à '+palH+' bpm';
     }
     return;
   }
@@ -558,17 +535,15 @@ function onFC(val,fromSlider){
     pt.className='phtag phr'; pt.textContent='♻ Récupération';
     if(val<=palB){
       gf.style.background='var(--green)'; ne.style.color='var(--green)';
-      al.className='abox ag'; al.textContent='▶ FC ok — tu peux reprendre la série !';
-      stopTimer();
+      al.className='abox ag'; al.textContent='▶ FC ok — reprends la série !'; stopTimer();
     } else {
       gf.style.background='var(--orange)'; ne.style.color='var(--orange)';
-      al.className='abox ai'; al.textContent='⏳ Récupère... encore '+(val-palB)+' bpm à perdre';
+      al.className='abox ai'; al.textContent='⏳ Récupère... encore '+(val-palB)+' bpm';
     }
     updateActBtn();
   }
 }
-
-function startTimer(){stopTimer();timerSec=0;timerIv=setInterval(()=>{timerSec++;const m=Math.floor(timerSec/60),s2=timerSec%60;const el=document.getElementById('ltmr');if(el)el.textContent=m+':'+(s2<10?'0':'')+s2;},1000);}
+function startTimer(){stopTimer();timerSec=0;timerIv=setInterval(()=>{timerSec++;const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('ltmr');if(el)el.textContent=m+':'+(s<10?'0':'')+s;},1000);}
 function stopTimer(){if(timerIv){clearInterval(timerIv);timerIv=null;}}
 
 // =========== SUIVI ===========
@@ -582,15 +557,8 @@ function renderSuivi(){
         <div class="card" style="padding:12px"><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Reprendre à</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green)">${c.palier_bas}<span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">bpm</span></div></div>
         <div class="card" style="padding:12px"><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Arrêter à</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red)">${c.palier_haut}<span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">bpm</span></div></div>
       </div>
-      <div class="card">
-        <div style="font-size:12px;font-weight:500;margin-bottom:8px">💬 Note de ton coach</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7;font-style:italic">${c.note_coach||'Aucune note pour le moment.'}</div>
-      </div>
-      <div class="card">
-        <div style="font-size:12px;font-weight:500;margin-bottom:8px">Cycle actuel</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--acc)">${c.cycle||'—'}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">Semaine ${c.semaine||1} · Mois ${c.mois||1}</div>
-      </div>
+      <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">💬 Note de ton coach</div><div style="font-size:12px;color:var(--muted);line-height:1.7;font-style:italic">${c.note_coach||'Aucune note.'}</div></div>
+      <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">Cycle actuel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--acc)">${c.cycle||'—'}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Semaine ${c.semaine||1} · Mois ${c.mois||1}</div></div>
     </div>`;
 }
 
@@ -600,9 +568,9 @@ function renderCoach(){
     <div class="pc">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px">Espace Coach</div>
-        <div style="font-size:11px;color:var(--muted)">${clients.length} clients actifs</div>
+        <div style="font-size:11px;color:var(--muted)">${allClients.length} clients</div>
       </div>
-      <div class="cgrid">${clients.map((c,i)=>`
+      <div class="cgrid">${allClients.map((c,i)=>`
         <div class="cc2 ${coachSelIdx===i?'sel':''}" onclick="selCoachClient(${i})">
           <div class="cav2" style="background:rgba(${c.genre==='H'?'71,217,255':'192,132,252'},.12);color:var(${c.genre==='H'?'--blue':'--purple'})">${c.prenom[0]}</div>
           <div class="cn2">${c.prenom} ${c.nom}</div>
@@ -617,20 +585,17 @@ function renderCoach(){
 async function selCoachClient(i){
   coachSelIdx=i; coachSessIdx=0;
   renderCoach();
-  showLoader(true);
-  const c=clients[i];
-  const [s,e]=await Promise.all([
-    sb.from('seances').select('*').eq('client_id',c.id).order('ordre'),
-    sb.from('exercices').select('*').order('ordre')
-  ]);
-  showLoader(false);
-  coachClientData[c.id]={seances:s.data||[], exercices:e.data||[]};
+  const c=allClients[i];
+  loader(true,'Chargement...');
+  const [s,e]=await Promise.all([sbSelect('seances',{client_id:c.id},'ordre'),sbSelect('exercices',{},'ordre')]);
+  loader(false);
+  coachCache[c.id]={seances:s||[],exercices:e||[]};
   renderCoachEdit(i);
 }
 
 function renderCoachEdit(i){
-  const c=clients[i];
-  const cd=coachClientData[c.id]||{seances:[],exercices:[]};
+  const c=allClients[i];
+  const cd=coachCache[c.id]||{seances:[],exercices:[]};
   const opts=cd.seances.map((s,j)=>`<option value="${j}">${s.jour} — ${s.nom}</option>`).join('');
   document.getElementById('cedit').innerHTML=`
     <div class="ep">
@@ -651,59 +616,46 @@ function renderCoachEdit(i){
 }
 
 function renderCoachSessEdit(i){
-  const c=clients[i];
-  const cd=coachClientData[c.id];
+  const c=allClients[i];
+  const cd=coachCache[c.id];
   const s=cd.seances[coachSessIdx]; if(!s) return;
   const sexos=cd.exercices.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
   s._exos=sexos;
-  const rows=sexos.map((ex,j)=>`
-    <div class="editrow">
-      <input type="text" value="${ex.nom}" oninput="sexos[${j}].nom=this.value;ex.nom=this.value">
-      <input type="number" value="${ex.series}" min="1" max="8" style="text-align:center" oninput="sexos[${j}].series=+this.value;ex.series=+this.value">
-      <input type="text" value="${ex.repetitions}" style="text-align:center" oninput="sexos[${j}].repetitions=this.value;ex.repetitions=this.value">
-      <input type="text" value="${ex.charge}" oninput="sexos[${j}].charge=this.value;ex.charge=this.value">
-      <button class="db2" onclick="delExCoach('${ex.id}',${i})">✕</button>
-    </div>`).join('');
   document.getElementById('csrows').innerHTML=`
     <div style="display:grid;grid-template-columns:2fr 55px 55px 85px 28px;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:3px">
       ${['Exercice','Séries','Reps','Charge',''].map(h=>`<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">${h}</div>`).join('')}
     </div>
-    ${rows}
+    ${sexos.map((ex,j)=>`
+    <div class="editrow">
+      <input type="text" value="${ex.nom}" oninput="sexos[${j}].nom=this.value">
+      <input type="number" value="${ex.series}" min="1" max="8" style="text-align:center" oninput="sexos[${j}].series=+this.value">
+      <input type="text" value="${ex.repetitions}" style="text-align:center" oninput="sexos[${j}].repetitions=this.value">
+      <input type="text" value="${ex.charge}" oninput="sexos[${j}].charge=this.value">
+      <button class="db2" onclick="delExCoach('${ex.id}',${i})">✕</button>
+    </div>`).join('')}
     <button class="addbtn" onclick="addExCoach('${s.id}',${i})">+ Ajouter un exercice</button>`;
 }
 
 async function delExCoach(exId,ci){
-  await sb.from('exercices').delete().eq('id',exId);
-  await selCoachClient(ci);
-  showToast('Exercice supprimé');
+  await sbDelete('exercices',exId);
+  await selCoachClient(ci); toast('Exercice supprimé');
 }
-
 async function addExCoach(seanceId,ci){
-  const c=clients[ci];
-  const cd=coachClientData[c.id];
-  const s=cd.seances[coachSessIdx];
+  const c=allClients[ci], cd=coachCache[c.id];
   const sexos=cd.exercices.filter(e=>e.seance_id===seanceId);
-  await sb.from('exercices').insert({seance_id:seanceId,ordre:sexos.length+1,nom:'Nouvel exercice',icone:'💪',series:3,repetitions:'12',charge:'',note:''});
+  await sbInsert('exercices',{seance_id:seanceId,ordre:sexos.length+1,nom:'Nouvel exercice',icone:'💪',series:3,repetitions:'12',charge:'',note:''});
   await selCoachClient(ci);
 }
-
 async function saveCoachClient(i){
-  const c=clients[i];
-  const cd=coachClientData[c.id];
+  const c=allClients[i], cd=coachCache[c.id];
   const note=document.getElementById('cnote').value;
   const s=cd.seances[coachSessIdx];
   const sexos=s?cd.exercices.filter(e=>e.seance_id===s.id):[];
-
-  showLoader(true);
-  // Update note
-  await sb.from('clients').update({note_coach:note}).eq('id',c.id);
+  loader(true,'Sauvegarde...');
+  await sbUpdate('clients',c.id,{note_coach:note});
   c.note_coach=note;
-  // Update exercices
-  for(const ex of sexos){
-    await sb.from('exercices').update({nom:ex.nom,series:ex.series,repetitions:ex.repetitions,charge:ex.charge}).eq('id',ex.id);
-  }
-  showLoader(false);
-  showToast('✓ Modifications sauvegardées !');
+  for(const ex of sexos) await sbUpdate('exercices',ex.id,{nom:ex.nom,series:ex.series,repetitions:ex.repetitions,charge:ex.charge});
+  loader(false); toast('✓ Modifications sauvegardées !');
 }
 
 // =========== BLUETOOTH ===========
@@ -721,12 +673,12 @@ async function connectBT(){
     ch.addEventListener('characteristicvaluechanged',e=>{
       const v=e.target.value;
       const bpm=(v.getUint8(0)&1)?v.getUint16(1,true):v.getUint8(1);
-      const sl=document.getElementById('simsl'); if(sl) sl.value=bpm;
+      const sl=document.getElementById('simsl');if(sl)sl.value=bpm;
       onFC(bpm,true);
     });
     d.classList.remove('blink'); p.classList.add('on'); l.textContent=dev.name.substring(0,14);
-    dev.addEventListener('gattserverdisconnected',()=>{p.classList.remove('on');d.classList.remove('blink');l.textContent='Déconnecté';});
-  }catch(e){d.classList.remove('blink'); l.textContent='Cardio BT';}
+    dev.addEventListener('gattserverdisconnected',()=>{p.classList.remove('on');l.textContent='Déconnecté';});
+  }catch(e){d.classList.remove('blink');l.textContent='Cardio BT';}
 }
 </script>
 </body>
