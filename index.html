@@ -1,24 +1,5 @@
+
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MGFC Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;
-  --acc:#e8ff47;--blue:#47d9ff;--green:#4ade80;--red:#ff4545;--orange:#ff8c42;--purple:#c084fc;
-  --text:#f0f0f0;--muted:#666;--border:#252525;
-  font-family:'DM Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--text);min-height:100vh}
-button{font-family:'DM Sans',sans-serif;cursor:pointer}
-input,textarea,select{font-family:'DM Sans',sans-serif;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;outline:none;font-size:13px;width:100%}
-input:focus,textarea:focus,select:focus{border-color:var(--acc)}
-select option{background:var(--bg2)}
-.screen{display:none;min-height:100vh}.screen.show{display:block}<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -466,6 +447,57 @@ function startLive(){
   renderLiveEx(); showPage('live');
   document.getElementById('nt-prog')?.classList.remove('on');
 }
+
+// Map exercice names to ExerciseDB GIF IDs
+const EX_GIFS = {
+  'développé couché': 'https://v2.exercisedb.io/image/OBFhPIsTq-_i6a',
+  'dév. couché': 'https://v2.exercisedb.io/image/OBFhPIsTq-_i6a',
+  'développé militaire': 'https://v2.exercisedb.io/image/lql3RJh5jGYD5L',
+  'dév. militaire': 'https://v2.exercisedb.io/image/lql3RJh5jGYD5L',
+  'squat': 'https://v2.exercisedb.io/image/xwBkFMBWXFtFYz',
+  'squats': 'https://v2.exercisedb.io/image/xwBkFMBWXFtFYz',
+  'fentes marchées': 'https://v2.exercisedb.io/image/KM5vkQI-xnTjVX',
+  'fentes': 'https://v2.exercisedb.io/image/KM5vkQI-xnTjVX',
+  'tractions': 'https://v2.exercisedb.io/image/CgJHPFAkZPTiGF',
+  'tractions assistées': 'https://v2.exercisedb.io/image/CgJHPFAkZPTiGF',
+  'rowing': 'https://v2.exercisedb.io/image/CMfMaHqOQvS4bJ',
+  'rowing barre': 'https://v2.exercisedb.io/image/CMfMaHqOQvS4bJ',
+  'rowing haltères': 'https://v2.exercisedb.io/image/cmBbDV-jGdq7AY',
+  'soulevé de terre': 'https://v2.exercisedb.io/image/8-G5ULbCBIaWrR',
+  'sdt': 'https://v2.exercisedb.io/image/8-G5ULbCBIaWrR',
+  'soulevé de terre roumain': 'https://v2.exercisedb.io/image/7YJUDmUNpMFjT3',
+  'sdt roumain': 'https://v2.exercisedb.io/image/7YJUDmUNpMFjT3',
+  'hip thrust': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
+  'montée de bassin': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
+  'élévations latérales': 'https://v2.exercisedb.io/image/FE4PNzXhbEqxWE',
+  'biceps': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
+  'curl biceps': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
+  'biceps haltères': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
+  'dips': 'https://v2.exercisedb.io/image/eBBMwmfPfIQBvd',
+  'triceps': 'https://v2.exercisedb.io/image/3XFcovb6C9VRKQ',
+  'leg extension': 'https://v2.exercisedb.io/image/VbMVXsHNxNKJmR',
+  'leg curl': 'https://v2.exercisedb.io/image/Pz0FkRoGlNJ5w2',
+  'standing leg curl': 'https://v2.exercisedb.io/image/Pz0FkRoGlNJ5w2',
+  'abdominaux': 'https://v2.exercisedb.io/image/gMGpZXOPCIg55k',
+  'pull-down': 'https://v2.exercisedb.io/image/JjIMEFMdTBqFLe',
+  'tirage': 'https://v2.exercisedb.io/image/JjIMEFMdTBqFLe',
+  'extension de hanche': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
+  'adducteurs': 'https://v2.exercisedb.io/image/3lhG2-CaYfgr4G',
+  'abducteurs': 'https://v2.exercisedb.io/image/4sK2HxYlxL4JT0',
+  'lombaires': 'https://v2.exercisedb.io/image/4c-ZGjEbUBh2t5',
+  'pompes': 'https://v2.exercisedb.io/image/4pnLBcXyCL0Xeg',
+};
+
+function getExGif(nom){
+  const n = nom.toLowerCase();
+  for(const [key,url] of Object.entries(EX_GIFS)){
+    if(n.includes(key)){
+      return `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.innerHTML='<span style=\'font-size:40px\'>${nom[0]}</span>'" alt="${nom}">`;
+    }
+  }
+  return `<span style="font-size:40px">💪</span>`;
+}
+
 function renderLiveEx(){
   const sexos=window._liveSexos||[];
   const _c=window._liveC||{};
@@ -483,7 +515,9 @@ function renderLiveEx(){
     return `<div class="sp ${c}">${i+1}</div>`;
   }).join('');
   document.getElementById('lecur').innerHTML=`
-    <div class="exil">${ex.icone||'💪'}</div>
+    <div class="exil" id="ex-illus-${liveExIdx}" style="overflow:hidden;border-radius:12px;background:var(--bg3)">
+      ${getExGif(ex.nom)}
+    </div>
     <div class="excn">${ex.nom}</div>
     <div class="excd">${ex.series} séries × ${ex.repetitions} · ${ex.charge}</div>
     ${!['cardio','échauffement','abdos','marche','cool down'].some(k=>ex.nom.toLowerCase().includes(k))?`
@@ -491,671 +525,6 @@ function renderLiveEx(){
       <span style="background:rgba(255,69,69,.1);border:1px solid rgba(255,69,69,.25);color:var(--red);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px">■ Stop à ${palH} bpm</span>
       <span style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--green);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px">▶ Reprendre à ${palB} bpm</span>
     </div>`:''}
-    ${ex.note?`<div style="font-size:10px;color:var(--blue);margin-bottom:7px;font-style:italic">${ex.note}</div>`:''}
-    <div class="spills">${pills}</div>`;
-  document.getElementById('lep').textContent=(liveExIdx+1)+'/'+sexos.length;
-  document.getElementById('lelist').innerHTML=sexos.map((e,i)=>{
-    const allD=(liveSets[i]||[]).every(x=>x==='done');
-    const isCur=i===liveExIdx;
-    return `<div class="er2 ${isCur?'cur':''} ${allD?'fin':''}">
-      <div class="er2ico">${e.icone||'💪'}</div>
-      <div class="er2n">${e.nom}<div style="font-size:9px;color:var(--muted)">${e.series}×${e.repetitions}</div></div>
-      <div class="er2d ${allD?'d':isCur?'a':''}"></div>
-    </div>`;
-  }).join('');
-  updateActBtn();
-}
-function updateActBtn(){
-  const btn=document.getElementById('actbtn'); if(!btn) return;
-  const palB=window._liveC?.palier_bas||Math.round((window._liveC?.fc_max||185)*.6);
-  if(livePhase==='idle'){btn.textContent='▶ Démarrer la série';btn.disabled=false;}
-  else if(livePhase==='serie'){btn.textContent='Surveille ta FC...';btn.disabled=true;}
-  else if(livePhase==='recup'){
-    if(liveFC<=palB){btn.textContent='▶ Reprendre la série';btn.disabled=false;}
-    else{btn.textContent='⏳ Attends '+palB+' bpm...';btn.disabled=true;}
-  }
-}
-function doAct(){
-  if(livePhase==='idle'||livePhase==='recup'){
-    livePhase='serie';
-    if(liveSets[liveExIdx]) liveSets[liveExIdx][liveSet]='active';
-    renderLiveEx(); onFC(liveFC,false);
-  }
-}
-function onFC(val,fromSlider){
-  if(fromSlider){const sv=document.getElementById('sv3');if(sv)sv.textContent=val;}
-  liveFC=val;
-  const c=window._liveC; if(!c) return;
-  const s=window._liveS, sexos=window._liveSexos||[];
-  const max=c.fc_max, palB=c.palier_bas||Math.round(max*.6), palH=c.palier_haut||Math.round(max*.8);
-  const pct=Math.min(Math.round(val/max*100),100);
-  const ne=document.getElementById('fcn'),gf=document.getElementById('gf2'),al=document.getElementById('lval'),pt=document.getElementById('phtag');
-  if(!ne) return;
-  ne.textContent=val; gf.style.width=pct+'%';
-  if(s.type==='cardio'){
-    const inZ=val>=palB&&val<=Math.round(max*.70);
-    gf.style.background=inZ?'var(--blue)':'var(--orange)'; ne.style.color=inZ?'var(--blue)':'var(--orange)';
-    pt.className='phtag phi'; pt.textContent='Cardio FC';
-    al.className='abox ac'; al.textContent=inZ?'✓ Bonne zone':'⚡ Ajuste — cible '+palB+'–'+Math.round(max*.70)+' bpm';
-    return;
-  }
-  if(livePhase==='idle'){
-    gf.style.background='var(--muted)'; ne.style.color='var(--muted)';
-    pt.className='phtag phi'; pt.textContent='En attente';
-    al.className='abox ai'; al.textContent='Clique Démarrer';
-    renderLiveEx(); return;
-  }
-  if(livePhase==='serie'){
-    if(val>=palH){
-      gf.style.background='var(--red)'; ne.style.color='var(--red)';
-      pt.className='phtag phr'; pt.textContent='♻ Récupération';
-      al.className='abox ar'; al.textContent='■ STOP — récupère jusqu\'à '+palB+' bpm';
-      livePhase='recup';
-      if(liveSets[liveExIdx]) liveSets[liveExIdx][liveSet]='done';
-      liveSet++;
-      if(liveSet>=(sexos[liveExIdx]?.series||0)){liveExIdx++;liveSet=0;}
-      if(liveExIdx>=sexos.length){
-        al.className='abox ag'; al.textContent='🎉 Séance terminée — bravo !';
-        document.getElementById('actbtn').textContent='✓ Terminé';
-        document.getElementById('actbtn').disabled=true; stopTimer(); return;
-      }
-      startTimer(); renderLiveEx();
-    } else {
-      gf.style.background='var(--acc)'; ne.style.color='var(--acc)';
-      pt.className='phtag phs'; pt.textContent='● En série';
-      al.className='abox aw'; al.textContent='● Continue — STOP à '+palH+' bpm';
-    }
-    return;
-  }
-  if(livePhase==='recup'){
-    pt.className='phtag phr'; pt.textContent='♻ Récupération';
-    if(val<=palB){
-      gf.style.background='var(--green)'; ne.style.color='var(--green)';
-      al.className='abox ag'; al.textContent='▶ FC ok — reprends la série !'; stopTimer();
-    } else {
-      gf.style.background='var(--orange)'; ne.style.color='var(--orange)';
-      al.className='abox ai'; al.textContent='⏳ Récupère... encore '+(val-palB)+' bpm';
-    }
-    updateActBtn();
-  }
-}
-function startTimer(){stopTimer();timerSec=0;timerIv=setInterval(()=>{timerSec++;const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('ltmr');if(el)el.textContent=m+':'+(s<10?'0':'')+s;},1000);}
-function stopTimer(){if(timerIv){clearInterval(timerIv);timerIv=null;}}
-
-// =========== SUIVI ===========
-function renderSuivi(){
-  const c=CU;
-  document.getElementById('pgSuivi').innerHTML=`
-    <div class="pc">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;margin-bottom:16px">Mon Suivi</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-        <div class="card" style="padding:12px"><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">FC max</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--acc)">${c.fc_max}<span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">bpm</span></div></div>
-        <div class="card" style="padding:12px"><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Reprendre à</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green)">${c.palier_bas}<span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">bpm</span></div></div>
-        <div class="card" style="padding:12px"><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Arrêter à</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red)">${c.palier_haut}<span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">bpm</span></div></div>
-      </div>
-      <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">💬 Note de ton coach</div><div style="font-size:12px;color:var(--muted);line-height:1.7;font-style:italic">${c.note_coach||'Aucune note.'}</div></div>
-      <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">Cycle actuel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--acc)">${c.cycle||'—'}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Semaine ${c.semaine||1} · Mois ${c.mois||1}</div></div>
-    </div>`;
-}
-
-// =========== COACH ===========
-function renderCoach(){
-  document.getElementById('pgCoach').innerHTML=`
-    <div class="pc">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px">Espace Coach</div>
-        <div style="font-size:11px;color:var(--muted)">${allClients.length} clients</div>
-      </div>
-      <div class="cgrid">${allClients.map((c,i)=>`
-        <div class="cc2 ${coachSelIdx===i?'sel':''}" onclick="selCoachClient(${i})">
-          <div class="cav2" style="background:rgba(${c.genre==='H'?'71,217,255':'192,132,252'},.12);color:var(${c.genre==='H'?'--blue':'--purple'})">${c.prenom[0]}</div>
-          <div class="cn2">${c.prenom} ${c.nom}</div>
-          <div class="ci2">${c.fc_max} bpm · ${c.cycle||''}</div>
-          <div class="ctg2 ${c.genre==='H'?'th':'tf'}">${c.genre==='H'?'👨 H':'👩 F'}</div>
-        </div>`).join('')}
-      </div>
-      <div id="cedit"></div>
-    </div>`;
-}
-
-async function selCoachClient(i){
-  coachSelIdx=i; coachSessIdx=0;
-  renderCoach();
-  const c=allClients[i];
-  loader(true,'Chargement...');
-  const [s,e]=await Promise.all([sbSelect('seances',{client_id:c.id},'ordre'),sbSelect('exercices',{},'ordre')]);
-  loader(false);
-  coachCache[c.id]={seances:s||[],exercices:e||[]};
-  renderCoachEdit(i);
-}
-
-function renderCoachEdit(i){
-  const c=allClients[i];
-  const cd=coachCache[c.id]||{seances:[],exercices:[]};
-  const opts=cd.seances.map((s,j)=>`<option value="${j}">${s.jour} — ${s.nom}</option>`).join('');
-  document.getElementById('cedit').innerHTML=`
-    <div class="ep">
-      <div class="ep-t">
-        <span>${c.prenom} ${c.nom} <span class="mbadge">${c.cycle||''}</span></span>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <select class="ssel" style="width:auto;font-size:11px" onchange="coachSessIdx=+this.value;renderCoachSessEdit(${i})">${opts}</select>
-          <button class="savebtn" onclick="saveCoachClient(${i})">✓ Sauvegarder</button>
-        </div>
-      </div>
-      <div id="csrows"></div>
-      <div style="margin-top:12px">
-        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Note personnalisée</div>
-        <textarea class="nb" id="cnote" style="width:100%">${c.note_coach||''}</textarea>
-      </div>
-    </div>`;
-  renderCoachSessEdit(i);
-}
-
-function renderCoachSessEdit(i){
-  const c=allClients[i];
-  const cd=coachCache[c.id];
-  const s=cd.seances[coachSessIdx]; if(!s) return;
-  const sexos=cd.exercices.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
-  s._exos=sexos;
-  document.getElementById('csrows').innerHTML=`
-    <div style="display:grid;grid-template-columns:2fr 55px 55px 85px 28px;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:3px">
-      ${['Exercice','Séries','Reps','Charge',''].map(h=>`<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">${h}</div>`).join('')}
-    </div>
-    ${sexos.map((ex,j)=>`
-    <div class="editrow">
-      <input type="text" value="${ex.nom}" oninput="sexos[${j}].nom=this.value">
-      <input type="number" value="${ex.series}" min="1" max="8" style="text-align:center" oninput="sexos[${j}].series=+this.value">
-      <input type="text" value="${ex.repetitions}" style="text-align:center" oninput="sexos[${j}].repetitions=this.value">
-      <input type="text" value="${ex.charge}" oninput="sexos[${j}].charge=this.value">
-      <button class="db2" onclick="delExCoach('${ex.id}',${i})">✕</button>
-    </div>`).join('')}
-    <button class="addbtn" onclick="addExCoach('${s.id}',${i})">+ Ajouter un exercice</button>`;
-}
-
-async function delExCoach(exId,ci){
-  await sbDelete('exercices',exId);
-  await selCoachClient(ci); toast('Exercice supprimé');
-}
-async function addExCoach(seanceId,ci){
-  const c=allClients[ci], cd=coachCache[c.id];
-  const sexos=cd.exercices.filter(e=>e.seance_id===seanceId);
-  await sbInsert('exercices',{seance_id:seanceId,ordre:sexos.length+1,nom:'Nouvel exercice',icone:'💪',series:3,repetitions:'12',charge:'',note:''});
-  await selCoachClient(ci);
-}
-async function saveCoachClient(i){
-  const c=allClients[i], cd=coachCache[c.id];
-  const note=document.getElementById('cnote').value;
-  const s=cd.seances[coachSessIdx];
-  const sexos=s?cd.exercices.filter(e=>e.seance_id===s.id):[];
-  loader(true,'Sauvegarde...');
-  await sbUpdate('clients',c.id,{note_coach:note});
-  c.note_coach=note;
-  for(const ex of sexos) await sbUpdate('exercices',ex.id,{nom:ex.nom,series:ex.series,repetitions:ex.repetitions,charge:ex.charge});
-  loader(false); toast('✓ Modifications sauvegardées !');
-}
-
-// =========== BLUETOOTH ===========
-async function connectBT(){
-  if(!navigator.bluetooth){alert('Web Bluetooth: utilise Chrome ou Edge desktop.');return;}
-  const d=document.getElementById('btd'),l=document.getElementById('btl'),p=document.getElementById('btp');
-  d.classList.add('blink'); l.textContent='Recherche...';
-  try{
-    const dev=await navigator.bluetooth.requestDevice({filters:[{services:[0x180D]}]});
-    l.textContent='Connexion...';
-    const srv=await dev.gatt.connect();
-    const svc=await srv.getPrimaryService(0x180D);
-    const ch=await svc.getCharacteristic(0x2A37);
-    await ch.startNotifications();
-    ch.addEventListener('characteristicvaluechanged',e=>{
-      const v=e.target.value;
-      const bpm=(v.getUint8(0)&1)?v.getUint16(1,true):v.getUint8(1);
-      const sl=document.getElementById('simsl');if(sl)sl.value=bpm;
-      onFC(bpm,true);
-    });
-    d.classList.remove('blink'); p.classList.add('on'); l.textContent=dev.name.substring(0,14);
-    dev.addEventListener('gattserverdisconnected',()=>{p.classList.remove('on');l.textContent='Déconnecté';});
-  }catch(e){d.classList.remove('blink');l.textContent='Cardio BT';}
-}
-</script>
-</body>
-</html>
-
-/* LOGIN */
-#ls{display:flex;align-items:center;justify-content:center;padding:40px 20px;min-height:100vh}
-.lb{width:100%;max-width:360px}
-.ll{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--acc)}
-.ll span{color:var(--text)}
-.lsub{font-size:13px;color:var(--muted);margin-bottom:28px}
-.lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;margin-top:12px}
-.lbtn{width:100%;margin-top:18px;background:var(--acc);color:#0a0a0a;border:none;font-size:14px;font-weight:500;padding:13px;border-radius:10px}
-.lbtn:hover{opacity:.9}
-.lerr{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-/* LOADER */
-.loader{position:fixed;inset:0;background:rgba(10,10,10,.92);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
-.loader.show{display:flex}
-.lspin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.lmsg{font-size:13px;color:var(--muted)}
-/* TOPNAV */
-.tnav{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);background:rgba(10,10,10,.97);position:sticky;top:0;z-index:100}
-.tlogo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--acc)}
-.tlogo span{color:var(--text)}
-.ntabs{display:flex;gap:2px}
-.ntab{background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;padding:5px 11px;border-radius:20px;transition:.2s}
-.ntab:hover,.ntab.on{background:var(--bg3);color:var(--text)}
-.ntab.on{color:var(--acc)}
-.navr{display:flex;align-items:center;gap:8px}
-.btp{display:flex;align-items:center;gap:5px;border:1px solid var(--border);border-radius:20px;padding:4px 11px;font-size:11px;color:var(--muted);cursor:pointer;transition:.2s}
-.btp:hover{border-color:var(--blue);color:var(--blue)}
-.btp.on{border-color:var(--green);color:var(--green)}
-.btd{width:6px;height:6px;border-radius:50%;background:currentColor}
-.btd.blink{animation:bl 1s infinite}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
-.av{width:28px;height:28px;border-radius:50%;background:rgba(232,255,71,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--acc)}
-.xb{background:none;border:none;color:var(--muted);font-size:12px}
-.pc{padding:18px;max-width:800px;margin:0 auto}
-/* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-.wgrid{display:grid;gap:8px;margin-bottom:16px}
-.wcard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;transition:.2s;text-align:center}
-.wcard:hover,.wcard.sel{border-color:var(--acc);background:rgba(232,255,71,.04)}
-.wd{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
-.wi{font-size:20px;margin-bottom:5px}
-.wn{font-size:11px;font-weight:500;line-height:1.3}
-.wtag{display:inline-block;margin-top:5px;font-size:9px;padding:2px 7px;border-radius:20px}
-.tm{background:rgba(232,255,71,.1);color:var(--acc)}
-.tc{background:rgba(71,217,255,.1);color:var(--blue)}
-.sh{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.sh-t{font-family:'Bebas Neue',sans-serif;font-size:22px}
-.sh-s{font-size:12px;color:var(--muted);margin-top:2px}
-.fcbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
-.hrt{font-size:14px;animation:hb .8s ease-in-out infinite}
-@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
-.erow{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
-.erow:last-child{border-bottom:none}
-.enum{width:24px;height:24px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0}
-.eico{font-size:18px;width:36px;height:36px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.einfo{flex:1}
-.ename{font-size:13px;font-weight:500}
-.edet{font-size:11px;color:var(--muted);margin-top:2px}
-.enote{font-size:10px;color:var(--blue);margin-top:2px;font-style:italic}
-.sbtn{width:100%;background:var(--acc);color:#0a0a0a;border:none;font-size:13px;font-weight:500;padding:12px;border-radius:9px}
-.sbtn:hover{opacity:.9}
-.cbox{padding:14px 16px;background:rgba(71,217,255,.04);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.7}
-/* LIVE */
-.lwrap{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 50px)}
-.ll2{padding:14px;border-right:1px solid var(--border)}
-.lr{display:flex;flex-direction:column}
-.palr{display:flex;gap:7px;margin-bottom:12px}
-.pal{flex:1;border-radius:9px;padding:9px 11px;text-align:center}
-.pg{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15)}
-.pr{background:rgba(255,69,69,.06);border:1px solid rgba(255,69,69,.15)}
-.pll{font-size:8px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
-.pg .pll{color:var(--green)}.pr .pll{color:var(--red)}
-.pbpm{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1}
-.pg .pbpm{color:var(--green)}.pr .pbpm{color:var(--red)}
-.fcbox{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
-.fcnum{font-family:'Bebas Neue',sans-serif;font-size:90px;line-height:.9;transition:color .3s}
-.fcu{font-size:11px;color:var(--muted);margin:3px 0 12px}
-.gauge{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:6px}
-.gf{height:100%;border-radius:5px;transition:width .5s,background .3s}
-.gmks{position:relative;height:18px}
-.gm{position:absolute;transform:translateX(-50%);text-align:center;font-size:8px;color:var(--muted)}
-.abox{padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;text-align:center;margin-top:6px;transition:all .3s}
-.aw{background:rgba(232,255,71,.08);border:1px solid rgba(232,255,71,.2);color:var(--acc)}
-.ag{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--green)}
-.ar{background:rgba(255,69,69,.08);border:1px solid rgba(255,69,69,.2);color:var(--red)}
-.ai{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}
-.ac{background:rgba(71,217,255,.08);border:1px solid rgba(71,217,255,.2);color:var(--blue)}
-.phtag{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;display:inline-block;margin-bottom:8px}
-.phs{background:rgba(232,255,71,.1);color:var(--acc)}
-.phr{background:rgba(74,222,128,.1);color:var(--green)}
-.phi{background:var(--bg3);color:var(--muted)}
-.simr{display:flex;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--border);margin-top:7px}
-.simr label{font-size:10px;color:var(--muted);min-width:70px;flex-shrink:0}
-input[type=range]{flex:1;accent-color:var(--acc);width:auto}
-.sv2{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--acc);min-width:32px;text-align:right}
-.lrhdr{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.lrht{font-family:'Bebas Neue',sans-serif;font-size:16px}
-.excur{padding:12px}
-.exil{background:var(--bg3);border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:9px}
-.excn{font-family:'Bebas Neue',sans-serif;font-size:20px;margin-bottom:2px}
-.excd{font-size:11px;color:var(--muted);margin-bottom:7px}
-.spills{display:flex;gap:4px;flex-wrap:wrap}
-.sp{width:27px;height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;border:1px solid var(--border)}
-.sp.d{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:var(--green)}
-.sp.a{background:rgba(232,255,71,.1);border-color:rgba(232,255,71,.3);color:var(--acc)}
-.sp.t{background:var(--bg3);color:var(--muted)}
-.exscroll{flex:1;overflow-y:auto;padding:6px 8px}
-.er2{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:8px;margin-bottom:3px}
-.er2.cur{background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.12)}
-.er2.fin{opacity:.4}
-.er2ico{width:28px;height:28px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.er2n{font-size:11px;flex:1;line-height:1.3}
-.er2d{width:6px;height:6px;border-radius:50%;background:var(--bg);flex-shrink:0}
-.er2d.d{background:var(--green)}.er2d.a{background:var(--acc)}
-.actbtn{margin:7px 8px;background:var(--acc);color:#0a0a0a;border:none;font-size:12px;font-weight:500;padding:11px;border-radius:9px;width:calc(100% - 16px)}
-.actbtn:hover{opacity:.9}
-.actbtn:disabled{background:var(--bg3);color:var(--muted)}
-.backbtn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--muted);font-size:11px;padding:6px 0;margin-bottom:10px}
-.timr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.timv{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted)}
-/* COACH */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-.cc2{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:.2s}
-.cc2:hover,.cc2.sel{border-color:var(--acc)}
-.cav2{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;margin-bottom:8px}
-.cn2{font-weight:500;font-size:13px;margin-bottom:2px}
-.ci2{font-size:10px;color:var(--muted)}
-.ctg2{display:inline-block;font-size:9px;padding:2px 7px;border-radius:20px;margin-top:5px}
-.th{background:rgba(71,217,255,.1);color:var(--blue)}
-.tf{background:rgba(192,132,252,.1);color:var(--purple)}
-.ep{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-.ep-t{font-weight:500;font-size:13px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.editrow{display:grid;grid-template-columns:2fr 55px 55px 85px 28px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
-.editrow:last-child{border-bottom:none}
-.editrow input{font-size:12px;padding:6px 8px}
-.editrow input:first-child{text-align:left}
-.db2{background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;border-radius:5px;font-size:12px;flex-shrink:0}
-.db2:hover{border-color:var(--red);color:var(--red)}
-.addbtn{background:none;border:1px dashed var(--border);color:var(--muted);padding:8px;border-radius:9px;width:100%;margin-top:8px;font-size:11px;transition:.2s}
-.addbtn:hover{border-color:var(--acc);color:var(--acc)}
-.savebtn{background:var(--acc);color:#0a0a0a;border:none;font-size:12px;font-weight:500;padding:9px 18px;border-radius:9px;flex-shrink:0}
-.nb{height:70px;resize:none;font-size:12px;margin-top:7px}
-.ssel{margin-bottom:10px;font-size:12px}
-.mbadge{display:inline-block;background:rgba(232,255,71,.1);color:var(--acc);font-size:10px;padding:2px 8px;border-radius:20px;margin-left:6px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#0a0a0a;font-size:13px;font-weight:500;padding:10px 24px;border-radius:20px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
-</style>
-</head>
-<body>
-
-<div class="loader" id="loader"><div class="lspin"></div><div class="lmsg" id="lmsg">Chargement...</div></div>
-<div class="toast" id="toast"></div>
-
-<div class="screen show" id="ls">
-  <div style="display:flex;align-items:center;justify-content:center;padding:50px 20px;min-height:100vh">
-    <div class="lb">
-      <div class="ll">MGFC<span> Pro</span></div>
-      <div class="lsub">Muscu Guidée par la Fréquence Cardiaque</div>
-      <div class="lbl">Email</div>
-      <input type="email" id="lem" placeholder="votre@email.com">
-      <div class="lbl">Mot de passe</div>
-      <input type="password" id="lpw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      <div class="lerr" id="lerr"></div>
-      <button class="lbtn" onclick="doLogin()">Se connecter</button>
-    </div>
-  </div>
-</div>
-
-<div class="screen" id="as">
-  <nav class="tnav">
-    <div class="tlogo">MGFC<span> Pro</span></div>
-    <div class="ntabs" id="ntabs"></div>
-    <div class="navr">
-      <div class="btp" id="btp" onclick="connectBT()">
-        <div class="btd" id="btd"></div>
-        <span id="btl">Cardio BT</span>
-      </div>
-      <div class="av" id="avp">?</div>
-      <button class="xb" onclick="logout()">✕</button>
-    </div>
-  </nav>
-  <div id="pgProg" style="display:none"></div>
-  <div id="pgLive" style="display:none"></div>
-  <div id="pgSuivi" style="display:none"></div>
-  <div id="pgCoach" style="display:none"></div>
-</div>
-
-<script>
-// =========== CONFIG SUPABASE ===========
-const SB_URL = 'https://ynzmdsuodmvlvljvfbzw.supabase.co';
-const SB_KEY = 'sb_publishable_uOjfU8EwOHUcBb_sy-HagQ_Aeu056d6';
-
-// Appels API directs via fetch (compatible nouvelle clé Supabase)
-async function sbSelect(table, filters={}, order=null){
-  let url = `${SB_URL}/rest/v1/${table}?select=*`;
-  for(const [k,v] of Object.entries(filters)) url += `&${k}=eq.${encodeURIComponent(v)}`;
-  if(order) url += `&order=${order}`;
-  const r = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}});
-  return await r.json();
-}
-async function sbUpdate(table, id, data){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
-    method:'PATCH',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body: JSON.stringify(data)
-  });
-  return r.ok;
-}
-async function sbInsert(table, data){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
-    method:'POST',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
-    body: JSON.stringify(data)
-  });
-  return await r.json();
-}
-async function sbDelete(table, id){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
-    method:'DELETE',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-  });
-  return r.ok;
-}
-
-// =========== STATE ===========
-const COACH = {email:'thomas.lombard@sfr.fr', pwd:'mgfc2026coach', nom:'Lombard', prenom:'Thomas', initiale:'T', role:'coach'};
-let CU=null, allClients=[], selSess=0;
-let livePhase='idle', liveExIdx=0, liveSet=0, liveSets=[], timerIv=null, timerSec=0, liveFC=80;
-let coachSelIdx=null, coachSessIdx=0, coachCache={};
-
-function loader(show, msg='Chargement...'){
-  document.getElementById('loader').classList.toggle('show',show);
-  document.getElementById('lmsg').textContent=msg;
-}
-function toast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-// =========== LOGIN ===========
-async function doLogin(){
-  const email=document.getElementById('lem').value.trim();
-  const pwd=document.getElementById('lpw').value.trim();
-  const err=document.getElementById('lerr');
-  err.textContent='';
-  if(!email||!pwd){err.textContent='Remplis tous les champs';return;}
-
-  // Coach
-  if(email===COACH.email && pwd===COACH.pwd){
-    CU={...COACH};
-    loader(true,'Chargement des clients...');
-    allClients = await sbSelect('clients',{},'prenom');
-    loader(false);
-    initApp(); return;
-  }
-
-  // Client
-  loader(true,'Connexion...');
-  const data = await sbSelect('clients',{email});
-  loader(false);
-  if(!data||!data.length){err.textContent='Email introuvable';return;}
-  const c=data[0];
-  const expectedPwd = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+c.id.slice(0,4);
-  // Accepte aussi prenom+123 pour simplicité
-  const pwd2 = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+'123';
-  if(pwd!==expectedPwd && pwd!==pwd2){err.textContent='Mot de passe incorrect';return;}
-
-  CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
-  loader(true,'Chargement du programme...');
-  const [seances, exos] = await Promise.all([
-    sbSelect('seances',{client_id:c.id},'ordre'),
-    sbSelect('exercices',{},'ordre')
-  ]);
-  loader(false);
-  window._seances=seances||[];
-  window._exos=exos||[];
-  initApp();
-}
-
-function initApp(){
-  document.getElementById('ls').classList.remove('show');
-  document.getElementById('as').classList.add('show');
-  document.getElementById('avp').textContent=CU.initiale;
-  buildNav();
-  if(CU.role==='client') showPage('prog');
-  else{renderCoach();showPage('coach');}
-}
-
-function logout(){
-  CU=null;allClients=[];window._seances=[];window._exos=[];
-  document.getElementById('as').classList.remove('show');
-  document.getElementById('ls').classList.add('show');
-  document.getElementById('lem').value='';
-  document.getElementById('lpw').value='';
-}
-
-// =========== NAV ===========
-function buildNav(){
-  const tabs=CU.role==='coach'
-    ?[{id:'coach',l:'Tableau de bord'},{id:'prog',l:'Démo'}]
-    :[{id:'prog',l:'Mon Programme'},{id:'suivi',l:'Mon Suivi'}];
-  document.getElementById('ntabs').innerHTML=tabs.map(t=>`<button class="ntab" id="nt-${t.id}" onclick="showPage('${t.id}')">${t.l}</button>`).join('');
-}
-function showPage(id){
-  ['pgProg','pgLive','pgSuivi','pgCoach'].forEach(p=>document.getElementById(p).style.display='none');
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
-  const m={prog:'pgProg',live:'pgLive',suivi:'pgSuivi',coach:'pgCoach'};
-  if(m[id])document.getElementById(m[id]).style.display='block';
-  const n=document.getElementById('nt-'+id);if(n)n.classList.add('on');
-  if(id==='prog')renderProg();
-  if(id==='suivi')renderSuivi();
-}
-
-// =========== PROGRAMME ===========
-async function renderProg(){
-  const pg=document.getElementById('pgProg');
-  pg.innerHTML='<div class="pc" style="padding-top:30px;text-align:center;color:var(--muted)">Chargement...</div>';
-  let clientData,clientSeances,clientExos;
-  if(CU.role==='client'){
-    clientData=CU; clientSeances=window._seances||[]; clientExos=window._exos||[];
-  } else {
-    if(!allClients.length) allClients=await sbSelect('clients',{},'prenom');
-    clientData=allClients[0];
-    if(!clientData){pg.innerHTML='<div class="pc">Aucun client</div>';return;}
-    loader(true,'Chargement...');
-    const [s,e]=await Promise.all([sbSelect('seances',{client_id:clientData.id},'ordre'),sbSelect('exercices',{},'ordre')]);
-    loader(false);
-    clientSeances=s||[]; clientExos=e||[];
-  }
-  const palH=clientData.palier_haut||Math.round(clientData.fc_max*.8);
-  const palB=clientData.palier_bas||Math.round(clientData.fc_max*.6);
-  const cols=Math.min(clientSeances.length,5);
-  const cards=clientSeances.map((s,i)=>`
-    <div class="wcard ${i===selSess?'sel':''}" onclick="selS(${i})">
-      <div class="wd">${s.jour}</div><div class="wi">${s.icone}</div>
-      <div class="wn">${s.nom}</div>
-      <div class="wtag ${s.type==='muscu'?'tm':'tc'}">${s.type==='muscu'?'Muscu MGFC':'Cardio FC'}</div>
-    </div>`).join('');
-  const s=clientSeances[selSess];
-  if(!s){pg.innerHTML='<div class="pc">Aucune séance</div>';return;}
-  const sexos=clientExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
-  const exRows=sexos.map((ex,j)=>`
-    <div class="erow">
-      <div class="enum">${j+1}</div>
-      <div class="eico">${ex.icone||'💪'}</div>
-      <div class="einfo">
-        <div class="ename">${ex.nom}</div>
-        <div class="edet">${ex.series} séries × ${ex.repetitions} · ${ex.charge}</div>
-        ${ex.note?`<div class="enote">${ex.note}</div>`:''}
-      </div>
-    </div>`).join('');
-  pg.innerHTML=`<div class="pc">
-    <div style="margin-bottom:14px">
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">${clientData.cycle||''}</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px">Bonjour ${clientData.prenom} 👋</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px">FC max <span style="color:var(--acc);font-weight:500">${clientData.fc_max} bpm</span> · Reprendre <span style="color:var(--green)">${palB}</span> · Arrêter <span style="color:var(--red)">${palH}</span> bpm</div>
-    </div>
-    <div class="wgrid" style="grid-template-columns:repeat(${cols},1fr)">${cards}</div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px">
-      <div class="sh">
-        <div><div class="sh-t">${s.nom}</div><div class="sh-s">${s.jour} · ${sexos.length} exercices</div></div>
-        <div style="text-align:right"><div style="font-size:9px;color:var(--muted);margin-bottom:2px">FC MAX</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--acc)">${clientData.fc_max} bpm</div></div>
-      </div>
-      ${s.type!=='cardio'?`<div class="fcbar"><span class="hrt">♥</span><span style="margin-left:6px">→ <strong style="color:var(--red)">${palH} bpm</strong> arrêt · Récup → <strong style="color:var(--green)">${palB} bpm</strong> reprise</span></div>`:''}
-      ${s.type==='cardio'&&s.cardio_note?`<div class="cbox">${s.cardio_note}</div>`:''}
-      ${exRows}
-      <div style="padding:12px 14px"><button class="sbtn" onclick="startLive()">▶ Démarrer cette séance en live</button></div>
-    </div>
-  </div>`;
-  window._liveClient=clientData; window._liveSeances=clientSeances; window._liveExos=clientExos;
-}
-function selS(i){selSess=i;renderProg();}
-
-// =========== LIVE ===========
-function startLive(){
-  const c=window._liveClient, sems=window._liveSeances, allExos=window._liveExos;
-  const s=sems[selSess];
-  const sexos=allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
-  const palH=c.palier_haut||Math.round(c.fc_max*.8);
-  const palB=c.palier_bas||Math.round(c.fc_max*.6);
-  livePhase='idle';liveExIdx=0;liveSet=0;liveFC=80;
-  liveSets=sexos.map(ex=>Array(ex.series).fill('todo'));
-  document.getElementById('pgLive').innerHTML=`
-  <div class="lwrap">
-    <div class="ll2">
-      <button class="backbtn" onclick="showPage('prog')">← Retour</button>
-      <div class="palr">
-        <div class="pal pg"><div class="pll">Reprendre</div><div class="pbpm">${palB}</div><div style="font-size:8px;color:var(--muted);margin-top:2px">60% FC max</div></div>
-        <div class="pal pr"><div class="pll">Arrêter</div><div class="pbpm">${palH}</div><div style="font-size:8px;color:var(--muted);margin-top:2px">80% FC max</div></div>
-      </div>
-      <div class="fcbox">
-        <div class="timr"><div class="phtag phi" id="phtag">En attente</div><div class="timv" id="ltmr">0:00</div></div>
-        <div class="fcnum" id="fcn" style="color:var(--muted)">—</div>
-        <div class="fcu">bpm · fréquence cardiaque</div>
-        <div class="gauge"><div class="gf" id="gf2" style="width:0%"></div></div>
-        <div class="gmks">
-          <div class="gm" style="left:${Math.round(palB/c.fc_max*100)}%"><span>${palB}</span><span style="color:var(--green);font-size:7px">▲GO</span></div>
-          <div class="gm" style="left:${Math.round(palH/c.fc_max*100)}%"><span>${palH}</span><span style="color:var(--red);font-size:7px">■STOP</span></div>
-        </div>
-        <div class="abox ai" id="lval">Appuie sur Démarrer</div>
-        ${s.type==='cardio'&&s.cardio_note?`<div class="abox ac" style="margin-top:6px">${s.cardio_note}</div>`:''}
-        <div class="simr">
-          <label>Simuler FC</label>
-          <input type="range" id="simsl" min="50" max="220" value="80" oninput="onFC(+this.value,true)">
-          <div class="sv2" id="sv3">80</div>
-        </div>
-      </div>
-    </div>
-    <div class="lr">
-      <div class="lrhdr"><div class="lrht">${s.nom}</div><div id="lep" style="font-size:10px;color:var(--muted)">1/${sexos.length||'—'}</div></div>
-      <div class="excur" id="lecur"></div>
-      <div class="exscroll" id="lelist"></div>
-      <button class="actbtn" id="actbtn" onclick="doAct()">▶ Démarrer</button>
-    </div>
-  </div>`;
-  window._liveS=s; window._liveSexos=sexos; window._liveC=c;
-  renderLiveEx(); showPage('live');
-  document.getElementById('nt-prog')?.classList.remove('on');
-}
-function renderLiveEx(){
-  const sexos=window._liveSexos||[];
-  if(!sexos.length){
-    document.getElementById('lecur').innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Séance cardio</div>';
-    document.getElementById('lelist').innerHTML='';
-    document.getElementById('actbtn').textContent='Cardio en cours';
-    document.getElementById('actbtn').disabled=true; return;
-  }
-  const ex=sexos[liveExIdx]; if(!ex) return;
-  const pills=(liveSets[liveExIdx]||[]).map((st,i)=>{
-    const c=st==='done'?'d':i===liveSet?'a':'t';
-    return `<div class="sp ${c}">${i+1}</div>`;
-  }).join('');
-  document.getElementById('lecur').innerHTML=`
-    <div class="exil">${ex.icone||'💪'}</div>
-    <div class="excn">${ex.nom}</div>
-    <div class="excd">${ex.series} séries × ${ex.repetitions} · ${ex.charge}</div>
     ${ex.note?`<div style="font-size:10px;color:var(--blue);margin-bottom:7px;font-style:italic">${ex.note}</div>`:''}
     <div class="spills">${pills}</div>`;
   document.getElementById('lep').textContent=(liveExIdx+1)+'/'+sexos.length;
