@@ -292,13 +292,16 @@ async function doLogin(){
 
   CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
   loader(true,'Chargement du programme...');
-  const [seances, exos] = await Promise.all([
-    sbSelect('seances',{client_id:c.id},'ordre'),
-    sbSelect('exercices',{},'ordre')
-  ]);
+  const seances = await sbSelect('seances',{client_id:c.id},'ordre');
+  const seanceIds = (seances||[]).map(s=>s.id);
+  let exos = [];
+  for(const sid of seanceIds){
+    const ex = await sbSelect('exercices',{seance_id:sid},'ordre');
+    if(ex) exos = exos.concat(ex);
+  }
   loader(false);
   window._seances=seances||[];
-  window._exos=exos||[];
+  window._exos=exos;
   initApp();
 }
 
@@ -348,9 +351,12 @@ async function renderProg(){
     clientData=allClients[0];
     if(!clientData){pg.innerHTML='<div class="pc">Aucun client</div>';return;}
     loader(true,'Chargement...');
-    const [s,e]=await Promise.all([sbSelect('seances',{client_id:clientData.id},'ordre'),sbSelect('exercices',{},'ordre')]);
+    const s = await sbSelect('seances',{client_id:clientData.id},'ordre');
+    const sIds = (s||[]).map(x=>x.id);
+    let e = [];
+    for(const sid of sIds){ const ex=await sbSelect('exercices',{seance_id:sid},'ordre'); if(ex) e=e.concat(ex); }
     loader(false);
-    clientSeances=s||[]; clientExos=e||[];
+    clientSeances=s||[]; clientExos=e;
   }
   const palH=clientData.palier_haut||Math.round(clientData.fc_max*.8);
   const palB=clientData.palier_bas||Math.round(clientData.fc_max*.6);
@@ -450,42 +456,41 @@ function startLive(){
 
 // Map exercice names to ExerciseDB GIF IDs
 const EX_GIFS = {
-  'développé couché': 'https://v2.exercisedb.io/image/OBFhPIsTq-_i6a',
-  'dév. couché': 'https://v2.exercisedb.io/image/OBFhPIsTq-_i6a',
-  'développé militaire': 'https://v2.exercisedb.io/image/lql3RJh5jGYD5L',
-  'dév. militaire': 'https://v2.exercisedb.io/image/lql3RJh5jGYD5L',
-  'squat': 'https://v2.exercisedb.io/image/xwBkFMBWXFtFYz',
-  'squats': 'https://v2.exercisedb.io/image/xwBkFMBWXFtFYz',
-  'fentes marchées': 'https://v2.exercisedb.io/image/KM5vkQI-xnTjVX',
-  'fentes': 'https://v2.exercisedb.io/image/KM5vkQI-xnTjVX',
-  'tractions': 'https://v2.exercisedb.io/image/CgJHPFAkZPTiGF',
-  'tractions assistées': 'https://v2.exercisedb.io/image/CgJHPFAkZPTiGF',
-  'rowing': 'https://v2.exercisedb.io/image/CMfMaHqOQvS4bJ',
-  'rowing barre': 'https://v2.exercisedb.io/image/CMfMaHqOQvS4bJ',
-  'rowing haltères': 'https://v2.exercisedb.io/image/cmBbDV-jGdq7AY',
-  'soulevé de terre': 'https://v2.exercisedb.io/image/8-G5ULbCBIaWrR',
-  'sdt': 'https://v2.exercisedb.io/image/8-G5ULbCBIaWrR',
-  'soulevé de terre roumain': 'https://v2.exercisedb.io/image/7YJUDmUNpMFjT3',
-  'sdt roumain': 'https://v2.exercisedb.io/image/7YJUDmUNpMFjT3',
-  'hip thrust': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
-  'montée de bassin': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
-  'élévations latérales': 'https://v2.exercisedb.io/image/FE4PNzXhbEqxWE',
-  'biceps': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
-  'curl biceps': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
-  'biceps haltères': 'https://v2.exercisedb.io/image/oIXlHMNLSm3gWV',
-  'dips': 'https://v2.exercisedb.io/image/eBBMwmfPfIQBvd',
-  'triceps': 'https://v2.exercisedb.io/image/3XFcovb6C9VRKQ',
-  'leg extension': 'https://v2.exercisedb.io/image/VbMVXsHNxNKJmR',
-  'leg curl': 'https://v2.exercisedb.io/image/Pz0FkRoGlNJ5w2',
-  'standing leg curl': 'https://v2.exercisedb.io/image/Pz0FkRoGlNJ5w2',
-  'abdominaux': 'https://v2.exercisedb.io/image/gMGpZXOPCIg55k',
-  'pull-down': 'https://v2.exercisedb.io/image/JjIMEFMdTBqFLe',
-  'tirage': 'https://v2.exercisedb.io/image/JjIMEFMdTBqFLe',
-  'extension de hanche': 'https://v2.exercisedb.io/image/eiuPYFtBOc0lO5',
-  'adducteurs': 'https://v2.exercisedb.io/image/3lhG2-CaYfgr4G',
-  'abducteurs': 'https://v2.exercisedb.io/image/4sK2HxYlxL4JT0',
-  'lombaires': 'https://v2.exercisedb.io/image/4c-ZGjEbUBh2t5',
-  'pompes': 'https://v2.exercisedb.io/image/4pnLBcXyCL0Xeg',
+  'développé couché': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
+  'dév. couché': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
+  'développé militaire': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHZ6eGt6dDNwZm91OG56M2t3dWRqaWZxeXp6NWZ6eWl3YzVxbXlwaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzoKnwFNmISR8I/giphy.gif',
+  'dév. militaire': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHZ6eGt6dDNwZm91OG56M2t3dWRqaWZxeXp6NWZ6eWl3YzVxbXlwaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzoKnwFNmISR8I/giphy.gif',
+  'squat': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
+  'squats': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
+  'goblet squat': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
+  'fentes marchées': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'fentes': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'fentes bulgares': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'tractions': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'tractions assistées': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'rowing barre': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
+  'rowing': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
+  'rowing haltères': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
+  'soulevé de terre': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+  'sdt': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+  'soulevé de terre roumain': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+  'hip thrust': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'montée de bassin': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'montées de bassin': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'élévations latérales': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZnd5NzZtaGhiYm9oMGlvcmVnNW9mNXhwaHB5ZmFpZHp5NDM5d25nNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxPCT5HSJG97nO/giphy.gif',
+  'biceps haltères': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'biceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'curl biceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'dips': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
+  'triceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
+  'leg extension': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2psN295NjZmbzVhdGt3eTdkYzl3d3ByMjBuZHlhZjcxM3A5dGV5byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt6ML6BklcajLsA/giphy.gif',
+  'leg curl': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeG1rb2c4NmNocWN0b3h3ZW96ZGoxeGxreWdhZjZqNjZ3ZWQ3OHNtdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
+  'standing leg curl': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeG1rb2c4NmNocWN0b3h3ZW96ZGoxeGxreWdhZjZqNjZ3ZWQ3OHNtdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
+  'pull-down': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'tirage': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'pompes': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmc0amlpdHEzZWkxaHEzaHFuZm5vcHBpd2U2ZzZzbGlzMjA3aDZnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzbnGJMsVWMSFe/giphy.gif',
+  'lombaires': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmc0amlpdHEzZWkxaHEzaHFuZm5vcHBpd2U2ZzZzbGlzMjA3aDZnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzbnGJMsVWMSFe/giphy.gif',
+  'extension de hanche': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
 };
 
 function getExGif(nom){
