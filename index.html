@@ -625,6 +625,10 @@ function selS(i){selSess=i;renderProg();}
 function startLive(){
   const c=window._liveClient, sems=window._liveSeances, allExos=window._liveExos;
   const s=sems[selSess];
+  // Démarrer enregistrement FC
+  window._palH = c.palier_haut||Math.round((c.fc_max||185)*.8);
+  window._palB = c.palier_bas||Math.round((c.fc_max||185)*.6);
+  startFCRecording(s.id);
   const sexos=allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
   const palH=c.palier_haut||Math.round(c.fc_max*.8);
   const palB=c.palier_bas||Math.round(c.fc_max*.6);
