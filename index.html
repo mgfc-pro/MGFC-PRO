@@ -79,24 +79,6 @@ select option{background:var(--bg2)}
 .ename{font-size:13px;font-weight:500}
 .edet{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* ===== COURBES FC ===== */
-.fc-history-btn{background:rgba(71,217,255,.1);border:1px solid rgba(71,217,255,.25);color:var(--blue);font-size:12px;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:10px}
-.fc-history-btn:hover{background:rgba(71,217,255,.2)}
-.fc-chart-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.fc-chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto}
-.fc-chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.fc-chart-title{font-size:16px;font-weight:500}
-.fc-chart-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
-.fc-sessions-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.fc-session-btn{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;text-align:left;font-size:13px;color:var(--text);transition:.2s}
-.fc-session-btn:hover,.fc-session-btn.act{border-color:var(--blue);color:var(--blue)}
-.fc-canvas-wrap{position:relative;width:100%;height:260px;margin-top:8px}
-.fc-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-.fc-stat{background:var(--bg3);border-radius:10px;padding:10px;text-align:center}
-.fc-stat-val{font-size:20px;font-weight:500;margin-bottom:2px}
-.fc-stat-label{font-size:11px;color:var(--muted)}
-.fc-no-data{text-align:center;color:var(--muted);font-size:14px;padding:40px 0}
-
 .enote{font-size:10px;color:var(--blue);margin-top:2px;font-style:italic}
 .fc-pills{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
 .fc-pill-stop{background:rgba(255,69,69,.1);border:1px solid rgba(255,69,69,.25);color:var(--red);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
@@ -189,7 +171,6 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#0a0a0a;font-size:13px;font-weight:500;padding:10px 24px;border-radius:20px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
 <body>
 
@@ -426,209 +407,13 @@ async function renderProg(){
   window._liveClient=clientData; window._liveSeances=clientSeances; window._liveExos=clientExos;
 }
 
-// ===== FC RECORDING =====
-let fcRecordInterval = null;
-let fcRecordData = []; // {t: timestamp_ms, v: fc_value, phase: string}
-let fcSessionStart = null;
-let fcCurrentSeanceId = null;
-
-function startFCRecording(seanceId) {
-  fcRecordData = [];
-  fcSessionStart = Date.now();
-  fcCurrentSeanceId = seanceId;
-  if(fcRecordInterval) clearInterval(fcRecordInterval);
-  fcRecordInterval = setInterval(() => {
-    const fc = window._currentFC || 0;
-    if(fc > 0) {
-      const palH = window._palH || 148;
-      const palB = window._palB || 111;
-      const phase = fc >= palH ? 'stop' : fc >= palB ? 'travail' : 'recup';
-      fcRecordData.push({
-        t: Date.now() - fcSessionStart,
-        v: fc,
-        phase: phase
-      });
-    }
-  }, 5000); // toutes les 5 secondes
-}
-
-function stopFCRecording() {
-  if(fcRecordInterval) { clearInterval(fcRecordInterval); fcRecordInterval = null; }
-}
-
-async function saveFCSession() {
-  if(!fcRecordData.length || !CU || !fcCurrentSeanceId) return;
-  const rows = fcRecordData.map(d => ({
-    client_id: CU.id,
-    seance_id: fcCurrentSeanceId,
-    session_date: new Date().toISOString().split('T')[0],
-    timestamp_ms: d.t,
-    fc_value: d.v,
-    phase: d.phase
-  }));
-  // Sauvegarder par batch de 50
-  for(let i=0; i<rows.length; i+=50) {
-    await sbInsertBatch('mesures_fc', rows.slice(i, i+50));
-  }
-  fcRecordData = [];
-}
-
-async function sbInsertBatch(table, rows) {
-  try {
-    const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
-      method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
-                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify(rows)
-    });
-    return res.ok;
-  } catch(e) { return false; }
-}
-
-// ===== FC HISTORY / COURBES =====
-async function showFCHistory(clientId, clientName) {
-  // Récupérer les sessions disponibles
-  const sessions = await sbSelect('mesures_fc', {client_id: clientId}, 'session_date');
-  // Grouper par date
-  const dateMap = {};
-  (sessions||[]).forEach(m => {
-    if(!dateMap[m.session_date]) dateMap[m.session_date] = [];
-    dateMap[m.session_date].push(m);
-  });
-  const dates = Object.keys(dateMap).sort().reverse();
-
-  const modal = document.createElement('div');
-  modal.className = 'fc-chart-modal';
-  modal.id = 'fcChartModal';
-  modal.innerHTML = `
-    <div class="fc-chart-wrap">
-      <div class="fc-chart-header">
-        <div class="fc-chart-title">📈 Courbes FC — ${clientName}</div>
-        <button class="fc-chart-close" onclick="document.getElementById('fcChartModal').remove()">✕</button>
-      </div>
-      ${dates.length === 0 ? '<div class="fc-no-data">Aucune séance enregistrée pour l'instant.<br>Les courbes apparaîtront après la première séance live.</div>' : `
-      <div class="fc-sessions-list">
-        ${dates.map((d,i) => `<button class="fc-session-btn${i===0?' act':''}" onclick="renderFCChart(${JSON.stringify(dateMap[d])}, '${d}', this)">${formatDate(d)} — ${dateMap[d].length} mesures</button>`).join('')}
-      </div>
-      <div class="fc-canvas-wrap"><canvas id="fcCanvas"></canvas></div>
-      <div class="fc-stats-row" id="fcStatsRow"></div>
-      `}
-    </div>
-  `;
-  document.body.appendChild(modal);
-  if(dates.length > 0) {
-    setTimeout(() => renderFCChart(dateMap[dates[0]], dates[0], modal.querySelector('.fc-session-btn')), 100);
-  }
-}
-
-function formatDate(d) {
-  const parts = d.split('-');
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
-}
-
-function renderFCChart(data, dateStr, btn) {
-  // Update active button
-  document.querySelectorAll('.fc-session-btn').forEach(b => b.classList.remove('act'));
-  if(btn) btn.classList.add('act');
-
-  const palH = window._palH || 148;
-  const palB = window._palB || 111;
-
-  // Sort by timestamp
-  data.sort((a,b) => a.timestamp_ms - b.timestamp_ms);
-  const labels = data.map(d => {
-    const sec = Math.round(d.timestamp_ms/1000);
-    const m = Math.floor(sec/60);
-    const s = sec%60;
-    return `${m}:${s.toString().padStart(2,'0')}`;
-  });
-  const values = data.map(d => d.fc_value);
-
-  // Destroy previous chart
-  if(window._fcChart) { window._fcChart.destroy(); window._fcChart = null; }
-
-  const ctx = document.getElementById('fcCanvas');
-  if(!ctx) return;
-
-  // Colors per point
-  const pointColors = values.map(v => v >= palH ? '#ff4545' : v >= palB ? '#e8ff47' : '#4ade80');
-  const bgColors = values.map(v => v >= palH ? 'rgba(255,69,69,.15)' : v >= palB ? 'rgba(232,255,71,.1)' : 'rgba(74,222,128,.1)');
-
-  window._fcChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'FC (bpm)',
-        data: values,
-        borderColor: '#47d9ff',
-        backgroundColor: 'rgba(71,217,255,0.06)',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: pointColors,
-        fill: true,
-        tension: 0.3
-      },{
-        label: 'Palier STOP',
-        data: Array(values.length).fill(palH),
-        borderColor: 'rgba(255,69,69,.5)',
-        borderWidth: 1,
-        borderDash: [5,5],
-        pointRadius: 0,
-        fill: false
-      },{
-        label: 'Palier REPRISE',
-        data: Array(values.length).fill(palB),
-        borderColor: 'rgba(74,222,128,.5)',
-        borderWidth: 1,
-        borderDash: [5,5],
-        pointRadius: 0,
-        fill: false
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => `${ctx.parsed.y} bpm`
-          }
-        }
-      },
-      scales: {
-        x: { ticks: { maxTicksLimit: 10, font: { size: 10 }, color: '#888' }, grid: { color: 'rgba(255,255,255,.05)' } },
-        y: { min: Math.max(40, Math.min(...values)-10), max: Math.max(...values)+10,
-             ticks: { font: { size: 10 }, color: '#888', callback: v => v+' bpm' },
-             grid: { color: 'rgba(255,255,255,.05)' } }
-      }
-    }
-  });
-
-  // Stats
-  const avg = Math.round(values.reduce((a,b)=>a+b,0)/values.length);
-  const max = Math.max(...values);
-  const min = Math.min(...values);
-  const inZone = Math.round(values.filter(v=>v>=palB && v<palH).length/values.length*100);
-  document.getElementById('fcStatsRow').innerHTML = `
-    <div class="fc-stat"><div class="fc-stat-val" style="color:var(--blue)">${avg}</div><div class="fc-stat-label">FC moyenne</div></div>
-    <div class="fc-stat"><div class="fc-stat-val" style="color:var(--red)">${max}</div><div class="fc-stat-label">FC max atteinte</div></div>
-    <div class="fc-stat"><div class="fc-stat-val" style="color:var(--green)">${min}</div><div class="fc-stat-label">FC min</div></div>
-    <div class="fc-stat"><div class="fc-stat-val" style="color:var(--acc)">${inZone}%</div><div class="fc-stat-label">Temps en zone</div></div>
-  `;
-}
-
 function selS(i){selSess=i;renderProg();}
 
 // =========== LIVE ===========
 function startLive(){
   const c=window._liveClient, sems=window._liveSeances, allExos=window._liveExos;
   const s=sems[selSess];
-  // Démarrer enregistrement FC
-  window._palH = c.palier_haut||Math.round((c.fc_max||185)*.8);
-  window._palB = c.palier_bas||Math.round((c.fc_max||185)*.6);
-  startFCRecording(s.id);
+
   const sexos=allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
   const palH=c.palier_haut||Math.round(c.fc_max*.8);
   const palB=c.palier_bas||Math.round(c.fc_max*.6);
@@ -853,7 +638,7 @@ function renderSuivi(){
       <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">💬 Note de ton coach</div><div style="font-size:12px;color:var(--muted);line-height:1.7;font-style:italic">${c.note_coach||'Aucune note.'}</div></div>
       <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">Cycle actuel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--acc)">${c.cycle||'—'}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Semaine ${c.semaine||1} · Mois ${c.mois||1}</div></div>
     </div>
-    <button class="fc-history-btn" onclick="showFCHistory('${c.id}','${c.prenom}')">📈 Voir mes courbes FC</button>
+
   `;
 }
 
@@ -893,10 +678,6 @@ async function selCoachClient(i){
   renderCoachEdit(i);
 }
 
-
-async function showCoachFCHistory(clientId, clientName) {
-  await showFCHistory(clientId, clientName);
-}
 function renderCoachEdit(i){
   const c=allClients[i];
   const cd=coachCache[c.id]||{seances:[],exercices:[]};
@@ -908,7 +689,6 @@ function renderCoachEdit(i){
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <select class="ssel" style="width:auto;font-size:11px" onchange="coachSessIdx=+this.value;renderCoachSessEdit(${i})">${opts}</select>
           <button class="savebtn" onclick="saveCoachClient(${i})">✓ Sauvegarder</button>
-        <button style="background:rgba(71,217,255,.1);border:1px solid rgba(71,217,255,.25);color:var(--blue);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:8px;width:100%" onclick="showFCHistory(allClients[${i}].id, allClients[${i}].prenom)">📈 Courbes FC</button>
         </div>
       </div>
       <div id="csrows"></div>
