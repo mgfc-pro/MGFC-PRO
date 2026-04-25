@@ -662,9 +662,14 @@ async function selCoachClient(i){
   renderCoach();
   const c=allClients[i];
   loader(true,'Chargement...');
-  const [s,e]=await Promise.all([sbSelect('seances',{client_id:c.id},'ordre'),sbSelect('exercices',{},'ordre')]);
+  const s = await sbSelect('seances',{client_id:c.id},'ordre');
+  let e = [];
+  for(const sid of (s||[]).map(x=>x.id)){
+    const ex = await sbSelect('exercices',{seance_id:sid},'ordre');
+    if(ex) e = e.concat(ex);
+  }
   loader(false);
-  coachCache[c.id]={seances:s||[],exercices:e||[]};
+  coachCache[c.id]={seances:s||[],exercices:e};
   renderCoachEdit(i);
 }
 
