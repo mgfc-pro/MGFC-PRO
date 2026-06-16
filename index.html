@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MGFC Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -20,7 +20,6 @@ input,textarea,select{font-family:'DM Sans',sans-serif;background:var(--bg3);bor
 input:focus,textarea:focus,select:focus{border-color:var(--acc)}
 select option{background:var(--bg2)}
 .screen{display:none;min-height:100vh}.screen.show{display:block}
-/* LOGIN */
 #ls{display:flex;align-items:center;justify-content:center;padding:40px 20px;min-height:100vh}
 .lb{width:100%;max-width:360px}
 .ll{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--acc)}
@@ -30,13 +29,11 @@ select option{background:var(--bg2)}
 .lbtn{width:100%;margin-top:18px;background:var(--acc);color:#0a0a0a;border:none;font-size:14px;font-weight:500;padding:13px;border-radius:10px}
 .lbtn:hover{opacity:.9}
 .lerr{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-/* LOADER */
 .loader{position:fixed;inset:0;background:rgba(10,10,10,.92);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 .loader.show{display:flex}
 .lspin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .lmsg{font-size:13px;color:var(--muted)}
-/* TOPNAV */
 .tnav{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);background:rgba(10,10,10,.97);position:sticky;top:0;z-index:100}
 .tlogo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--acc)}
 .tlogo span{color:var(--text)}
@@ -54,7 +51,6 @@ select option{background:var(--bg2)}
 .av{width:28px;height:28px;border-radius:50%;background:rgba(232,255,71,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--acc)}
 .xb{background:none;border:none;color:var(--muted);font-size:12px}
 .pc{padding:18px;max-width:800px;margin:0 auto}
-/* CARDS */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
 .wgrid{display:grid;gap:8px;margin-bottom:16px}
 .wcard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;transition:.2s;text-align:center}
@@ -78,7 +74,6 @@ select option{background:var(--bg2)}
 .einfo{flex:1}
 .ename{font-size:13px;font-weight:500}
 .edet{font-size:11px;color:var(--muted);margin-top:2px}
-
 .enote{font-size:10px;color:var(--blue);margin-top:2px;font-style:italic}
 .fc-pills{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
 .fc-pill-stop{background:rgba(255,69,69,.1);border:1px solid rgba(255,69,69,.25);color:var(--red);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
@@ -86,7 +81,6 @@ select option{background:var(--bg2)}
 .sbtn{width:100%;background:var(--acc);color:#0a0a0a;border:none;font-size:13px;font-weight:500;padding:12px;border-radius:9px}
 .sbtn:hover{opacity:.9}
 .cbox{padding:14px 16px;background:rgba(71,217,255,.04);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.7}
-/* LIVE */
 .lwrap{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 50px)}
 .ll2{padding:14px;border-right:1px solid var(--border)}
 .lr{display:flex;flex-direction:column}
@@ -144,7 +138,6 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .backbtn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--muted);font-size:11px;padding:6px 0;margin-bottom:10px}
 .timr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .timv{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted)}
-/* COACH */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
 .cc2{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:.2s}
 .cc2:hover,.cc2.sel{border-color:var(--acc)}
@@ -170,6 +163,22 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .mbadge{display:inline-block;background:rgba(232,255,71,.1);color:var(--acc);font-size:10px;padding:2px 8px;border-radius:20px;margin-left:6px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#0a0a0a;font-size:13px;font-weight:500;padding:10px 24px;border-radius:20px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
+/* COMPTE RENDU */
+.cr-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;overflow-y:auto;padding:20px}
+.cr-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:600px;margin:0 auto}
+.cr-title{font-family:'Bebas Neue',sans-serif;font-size:28px;margin-bottom:4px}
+.cr-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.cr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.cr-stat{background:var(--bg3);border-radius:10px;padding:10px;text-align:center}
+.cr-stat-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;margin-bottom:2px}
+.cr-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.cr-chart{background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:16px;height:220px;position:relative}
+.cr-comment{margin-bottom:16px}
+.cr-comment label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+.cr-comment textarea{height:80px;resize:none;font-size:13px;border-radius:10px}
+.cr-btns{display:flex;gap:8px}
+.cr-btn-wa{flex:1;background:#25D366;color:#fff;border:none;font-size:13px;font-weight:500;padding:13px;border-radius:10px}
+.cr-btn-back{background:var(--bg3);color:var(--muted);border:1px solid var(--border);font-size:13px;padding:13px 18px;border-radius:10px}
 </style>
 </head>
 <body>
@@ -212,11 +221,9 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 </div>
 
 <script>
-// =========== CONFIG SUPABASE ===========
 const SB_URL = 'https://ynzmdsuodmvlvljvfbzw.supabase.co';
 const SB_KEY = 'sb_publishable_uOjfU8EwOHUcBb_sy-HagQ_Aeu056d6';
 
-// Appels API directs via fetch (compatible nouvelle clé Supabase)
 async function sbSelect(table, filters={}, order=null){
   let url = `${SB_URL}/rest/v1/${table}?select=*`;
   for(const [k,v] of Object.entries(filters)) url += `&${k}=eq.${encodeURIComponent(v)}`;
@@ -248,11 +255,34 @@ async function sbDelete(table, id){
   return r.ok;
 }
 
-// =========== STATE ===========
 const COACH = {email:'thomas.lombard@sfr.fr', pwd:'mgfc2026coach', nom:'Lombard', prenom:'Thomas', initiale:'T', role:'coach'};
 let CU=null, allClients=[], selSess=0;
 let livePhase='idle', liveExIdx=0, liveSet=0, liveSets=[], timerIv=null, timerSec=0, liveFC=80;
 let coachSelIdx=null, coachSessIdx=0, coachCache={};
+
+// ===== ENREGISTREMENT FC EN MEMOIRE =====
+let fcData = []; // [{t: secondes, v: bpm}]
+let fcRecordIv = null;
+let fcStartTime = null;
+
+function startFCRecord(){
+  fcData = [];
+  fcStartTime = Date.now();
+  if(fcRecordIv) clearInterval(fcRecordIv);
+  fcRecordIv = setInterval(()=>{
+    const fc = liveFC;
+    if(fc > 0){
+      fcData.push({
+        t: Math.round((Date.now() - fcStartTime) / 1000),
+        v: fc
+      });
+    }
+  }, 5000);
+}
+
+function stopFCRecord(){
+  if(fcRecordIv){ clearInterval(fcRecordIv); fcRecordIv = null; }
+}
 
 function loader(show, msg='Chargement...'){
   document.getElementById('loader').classList.toggle('show',show);
@@ -263,15 +293,12 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-// =========== LOGIN ===========
 async function doLogin(){
   const email=document.getElementById('lem').value.trim();
   const pwd=document.getElementById('lpw').value.trim();
   const err=document.getElementById('lerr');
   err.textContent='';
   if(!email||!pwd){err.textContent='Remplis tous les champs';return;}
-
-  // Coach
   if(email===COACH.email && pwd===COACH.pwd){
     CU={...COACH};
     loader(true,'Chargement des clients...');
@@ -279,18 +306,14 @@ async function doLogin(){
     loader(false);
     initApp(); return;
   }
-
-  // Client
   loader(true,'Connexion...');
   const data = await sbSelect('clients',{email});
   loader(false);
   if(!data||!data.length){err.textContent='Email introuvable';return;}
   const c=data[0];
   const expectedPwd = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+c.id.slice(0,4);
-  // Accepte aussi prenom+123 pour simplicité
   const pwd2 = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+'123';
   if(pwd!==expectedPwd && pwd!==pwd2){err.textContent='Mot de passe incorrect';return;}
-
   CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
   loader(true,'Chargement du programme...');
   const seances = await sbSelect('seances',{client_id:c.id},'ordre');
@@ -323,7 +346,6 @@ function logout(){
   document.getElementById('lpw').value='';
 }
 
-// =========== NAV ===========
 function buildNav(){
   const tabs=CU.role==='coach'
     ?[{id:'coach',l:'Tableau de bord'},{id:'prog',l:'Démo'}]
@@ -340,7 +362,6 @@ function showPage(id){
   if(id==='suivi')renderSuivi();
 }
 
-// =========== PROGRAMME ===========
 async function renderProg(){
   const pg=document.getElementById('pgProg');
   pg.innerHTML='<div class="pc" style="padding-top:30px;text-align:center;color:var(--muted)">Chargement...</div>';
@@ -364,7 +385,7 @@ async function renderProg(){
   const cols=Math.min(clientSeances.length,5);
   const cards=clientSeances.map((s,i)=>`
     <div class="wcard ${i===selSess?'sel':''}" onclick="selS(${i})">
-      <div class="wd">${s.jour}</div><div class="wi">${s.icone}</div>
+      <div class="wd">${s.jour}</div><div class="wi">${s.icone||'💪'}</div>
       <div class="wn">${s.nom}</div>
       <div class="wtag ${s.type==='muscu'?'tm':'tc'}">${s.type==='muscu'?'Muscu MGFC':'Cardio FC'}</div>
     </div>`).join('');
@@ -409,20 +430,19 @@ async function renderProg(){
 
 function selS(i){selSess=i;renderProg();}
 
-// =========== LIVE ===========
 function startLive(){
   const c=window._liveClient, sems=window._liveSeances, allExos=window._liveExos;
   const s=sems[selSess];
-
   const sexos=allExos.filter(e=>e.seance_id===s.id).sort((a,b)=>a.ordre-b.ordre);
   const palH=c.palier_haut||Math.round(c.fc_max*.8);
   const palB=c.palier_bas||Math.round(c.fc_max*.6);
   livePhase='idle';liveExIdx=0;liveSet=0;liveFC=80;
   liveSets=sexos.map(ex=>Array(ex.series).fill('todo'));
+  startFCRecord();
   document.getElementById('pgLive').innerHTML=`
   <div class="lwrap">
     <div class="ll2">
-      <button class="backbtn" onclick="showPage('prog')">← Retour</button>
+      <button class="backbtn" onclick="stopFCRecord();showPage('prog')">← Retour</button>
       <div class="palr">
         <div class="pal pg"><div class="pll">Reprendre</div><div class="pbpm">${palB}</div><div style="font-size:8px;color:var(--muted);margin-top:2px">60% FC max</div></div>
         <div class="pal pr"><div class="pll">Arrêter</div><div class="pbpm">${palH}</div><div style="font-size:8px;color:var(--muted);margin-top:2px">80% FC max</div></div>
@@ -457,51 +477,25 @@ function startLive(){
   document.getElementById('nt-prog')?.classList.remove('on');
 }
 
-// Map exercice names to ExerciseDB GIF IDs
 const EX_GIFS = {
-  'développé couché': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
-  'dév. couché': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
-  'développé militaire': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHZ6eGt6dDNwZm91OG56M2t3dWRqaWZxeXp6NWZ6eWl3YzVxbXlwaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzoKnwFNmISR8I/giphy.gif',
-  'dév. militaire': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHZ6eGt6dDNwZm91OG56M2t3dWRqaWZxeXp6NWZ6eWl3YzVxbXlwaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzoKnwFNmISR8I/giphy.gif',
-  'squat': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
-  'squats': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
-  'goblet squat': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
-  'fentes marchées': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
-  'fentes': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
-  'fentes bulgares': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
-  'tractions': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
-  'tractions assistées': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
-  'rowing barre': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
-  'rowing': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
-  'rowing haltères': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
-  'soulevé de terre': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
-  'sdt': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
-  'soulevé de terre roumain': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
-  'hip thrust': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
-  'montée de bassin': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
-  'montées de bassin': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
-  'élévations latérales': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZnd5NzZtaGhiYm9oMGlvcmVnNW9mNXhwaHB5ZmFpZHp5NDM5d25nNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxPCT5HSJG97nO/giphy.gif',
-  'biceps haltères': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
-  'biceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
-  'curl biceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
-  'dips': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
-  'triceps': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
-  'leg extension': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2psN295NjZmbzVhdGt3eTdkYzl3d3ByMjBuZHlhZjcxM3A5dGV5byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt6ML6BklcajLsA/giphy.gif',
-  'leg curl': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeG1rb2c4NmNocWN0b3h3ZW96ZGoxeGxreWdhZjZqNjZ3ZWQ3OHNtdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
-  'standing leg curl': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeG1rb2c4NmNocWN0b3h3ZW96ZGoxeGxreWdhZjZqNjZ3ZWQ3OHNtdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
-  'pull-down': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
-  'tirage': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
-  'pompes': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmc0amlpdHEzZWkxaHEzaHFuZm5vcHBpd2U2ZzZzbGlzMjA3aDZnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzbnGJMsVWMSFe/giphy.gif',
-  'lombaires': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmc0amlpdHEzZWkxaHEzaHFuZm5vcHBpd2U2ZzZzbGlzMjA3aDZnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgzbnGJMsVWMSFe/giphy.gif',
-  'extension de hanche': 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'développé couché':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
+  'squat':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
+  'squats':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
+  'fentes':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'tractions':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'rowing':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
+  'soulevé de terre':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+  'sdt':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+  'hip thrust':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'montées de bassin':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
+  'biceps':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'triceps':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
 };
 
 function getExGif(nom){
-  const n = nom.toLowerCase();
+  const n=nom.toLowerCase();
   for(const [key,url] of Object.entries(EX_GIFS)){
-    if(n.includes(key)){
-      return `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.innerHTML='<span style=\'font-size:40px\'>${nom[0]}</span>'" alt="${nom}">`;
-    }
+    if(n.includes(key)) return `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.innerHTML='<span style=\'font-size:40px\'>💪</span>'" alt="${nom}">`;
   }
   return `<span style="font-size:40px">💪</span>`;
 }
@@ -523,9 +517,7 @@ function renderLiveEx(){
     return `<div class="sp ${c}">${i+1}</div>`;
   }).join('');
   document.getElementById('lecur').innerHTML=`
-    <div class="exil" id="ex-illus-${liveExIdx}" style="overflow:hidden;border-radius:12px;background:var(--bg3)">
-      ${getExGif(ex.nom)}
-    </div>
+    <div class="exil" style="overflow:hidden;border-radius:12px;background:var(--bg3)">${getExGif(ex.nom)}</div>
     <div class="excn">${ex.nom}</div>
     <div class="excd">${ex.series} séries × ${ex.repetitions} · ${ex.charge}</div>
     ${!['cardio','échauffement','abdos','marche','cool down'].some(k=>ex.nom.toLowerCase().includes(k))?`
@@ -547,6 +539,7 @@ function renderLiveEx(){
   }).join('');
   updateActBtn();
 }
+
 function updateActBtn(){
   const btn=document.getElementById('actbtn'); if(!btn) return;
   const palB=window._liveC?.palier_bas||Math.round((window._liveC?.fc_max||185)*.6);
@@ -557,6 +550,7 @@ function updateActBtn(){
     else{btn.textContent='⏳ Attends '+palB+' bpm...';btn.disabled=true;}
   }
 }
+
 function doAct(){
   if(livePhase==='idle'||livePhase==='recup'){
     livePhase='serie';
@@ -564,6 +558,7 @@ function doAct(){
     renderLiveEx(); onFC(liveFC,false);
   }
 }
+
 function onFC(val,fromSlider){
   if(fromSlider){const sv=document.getElementById('sv3');if(sv)sv.textContent=val;}
   liveFC=val;
@@ -597,9 +592,13 @@ function onFC(val,fromSlider){
       liveSet++;
       if(liveSet>=(sexos[liveExIdx]?.series||0)){liveExIdx++;liveSet=0;}
       if(liveExIdx>=sexos.length){
+        stopFCRecord();
         al.className='abox ag'; al.textContent='🎉 Séance terminée — bravo !';
-        document.getElementById('actbtn').textContent='✓ Terminé';
-        document.getElementById('actbtn').disabled=true; stopTimer(); return;
+        const btn=document.getElementById('actbtn');
+        btn.textContent='📊 Voir mon compte rendu';
+        btn.disabled=false;
+        btn.onclick=()=>showCompteRendu();
+        stopTimer(); return;
       }
       startTimer(); renderLiveEx();
     } else {
@@ -621,10 +620,189 @@ function onFC(val,fromSlider){
     updateActBtn();
   }
 }
+
 function startTimer(){stopTimer();timerSec=0;timerIv=setInterval(()=>{timerSec++;const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('ltmr');if(el)el.textContent=m+':'+(s<10?'0':'')+s;},1000);}
 function stopTimer(){if(timerIv){clearInterval(timerIv);timerIv=null;}}
 
-// =========== SUIVI ===========
+// ===== COMPTE RENDU =====
+function showCompteRendu(){
+  const c = window._liveC || CU;
+  const s = window._liveS;
+  const data = fcData;
+  const palH = c.palier_haut||Math.round(c.fc_max*.8);
+  const palB = c.palier_bas||Math.round(c.fc_max*.6);
+
+  if(!data.length){
+    toast('Pas assez de données FC enregistrées');
+    return;
+  }
+
+  const vals = data.map(d=>d.v);
+  const fcMoy = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  const fcMax = Math.max(...vals);
+  const fcMin = Math.min(...vals);
+  const dureeMin = Math.round(data[data.length-1].t / 60);
+  const enZone = Math.round(vals.filter(v=>v>=palB&&v<palH).length/vals.length*100);
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const heureStr = now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+
+  // Labels temps en mm:ss
+  const labels = data.map(d=>{
+    const m=Math.floor(d.t/60), sec=d.t%60;
+    return m+'\''+String(sec).padStart(2,'0');
+  });
+
+  // Détruire ancien chart si existant
+  if(window._crChart){ window._crChart.destroy(); window._crChart=null; }
+
+  const modal = document.createElement('div');
+  modal.className='cr-modal';
+  modal.id='crModal';
+  modal.innerHTML=`
+    <div class="cr-wrap">
+      <div class="cr-title">Compte Rendu</div>
+      <div class="cr-sub">${c.prenom} ${c.nom||''} · ${s?.nom||'Séance'} · ${dateStr} à ${heureStr}</div>
+      <div class="cr-stats">
+        <div class="cr-stat">
+          <div class="cr-stat-val" style="color:var(--blue)">${fcMoy}</div>
+          <div class="cr-stat-lbl">FC Moyenne</div>
+        </div>
+        <div class="cr-stat">
+          <div class="cr-stat-val" style="color:var(--red)">${fcMax}</div>
+          <div class="cr-stat-lbl">FC Max</div>
+        </div>
+        <div class="cr-stat">
+          <div class="cr-stat-val" style="color:var(--green)">${fcMin}</div>
+          <div class="cr-stat-lbl">FC Min</div>
+        </div>
+        <div class="cr-stat">
+          <div class="cr-stat-val" style="color:var(--acc)">${enZone}%</div>
+          <div class="cr-stat-lbl">Temps en zone</div>
+        </div>
+      </div>
+      <div class="cr-chart">
+        <canvas id="crChart"></canvas>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap">
+        <span>⏱ Durée : <strong style="color:var(--text)">${dureeMin} min</strong></span>
+        <span>🔴 Palier stop : <strong style="color:var(--red)">${palH} bpm</strong></span>
+        <span>🟢 Palier reprise : <strong style="color:var(--green)">${palB} bpm</strong></span>
+      </div>
+      <div class="cr-comment">
+        <label>Commentaire (ressenti, douleurs, remarques...)</label>
+        <textarea id="crComment" placeholder="Comment s'est passée la séance ?"></textarea>
+      </div>
+      <div class="cr-btns">
+        <button class="cr-btn-back" onclick="document.getElementById('crModal').remove()">← Retour</button>
+        <button class="cr-btn-wa" onclick="sendWhatsApp()">📲 Envoyer à Thomas</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  // Rendu Chart.js
+  setTimeout(()=>{
+    const ctx = document.getElementById('crChart');
+    if(!ctx) return;
+    window._crChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'FC (bpm)',
+            data: vals,
+            borderColor: '#47d9ff',
+            backgroundColor: 'rgba(71,217,255,0.06)',
+            borderWidth: 2,
+            pointRadius: 2,
+            pointBackgroundColor: vals.map(v=>v>=palH?'#ff4545':v>=palB?'#e8ff47':'#4ade80'),
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Stop '+palH,
+            data: Array(vals.length).fill(palH),
+            borderColor: 'rgba(255,69,69,.5)',
+            borderWidth: 1,
+            borderDash: [5,5],
+            pointRadius: 0,
+            fill: false
+          },
+          {
+            label: 'Reprise '+palB,
+            data: Array(vals.length).fill(palB),
+            borderColor: 'rgba(74,222,128,.5)',
+            borderWidth: 1,
+            borderDash: [5,5],
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {display:false},
+          tooltip:{callbacks:{label:c=>`${c.parsed.y} bpm`}}
+        },
+        scales: {
+          x:{
+            ticks:{maxTicksLimit:8,font:{size:10},color:'#666'},
+            grid:{color:'rgba(255,255,255,.04)'}
+          },
+          y:{
+            min: Math.max(40, fcMin-10),
+            max: fcMax+10,
+            ticks:{font:{size:10},color:'#666',callback:v=>v+' bpm'},
+            grid:{color:'rgba(255,255,255,.04)'}
+          }
+        }
+      }
+    });
+  }, 100);
+}
+
+function sendWhatsApp(){
+  const c = window._liveC || CU;
+  const s = window._liveS;
+  const comment = document.getElementById('crComment')?.value || '';
+  const vals = fcData.map(d=>d.v);
+  if(!vals.length){toast('Pas de données FC');return;}
+  const fcMoy = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  const fcMax = Math.max(...vals);
+  const fcMin = Math.min(...vals);
+  const dureeMin = Math.round(fcData[fcData.length-1].t/60);
+  const palH = c.palier_haut||Math.round(c.fc_max*.8);
+  const palB = c.palier_bas||Math.round(c.fc_max*.6);
+  const enZone = Math.round(vals.filter(v=>v>=palB&&v<palH).length/vals.length*100);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+  const msg = `📊 *Compte Rendu Séance MGFC*
+👤 ${c.prenom} ${c.nom||''}
+📅 ${dateStr}
+🏋️ ${s?.nom||'Séance'}
+
+❤️ FC Moyenne : *${fcMoy} bpm*
+🔴 FC Max : *${fcMax} bpm*
+🟢 FC Min : *${fcMin} bpm*
+⏱ Durée : *${dureeMin} min*
+✅ Temps en zone : *${enZone}%*
+
+Palier stop : ${palH} bpm | Palier reprise : ${palB} bpm
+${comment?'\n💬 '+comment:''}
+
+_Envoyé depuis TomPulse MGFC_`;
+
+  const phone = '33771612018';
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// ===== SUIVI =====
 function renderSuivi(){
   const c=CU;
   document.getElementById('pgSuivi').innerHTML=`
@@ -637,12 +815,10 @@ function renderSuivi(){
       </div>
       <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">💬 Note de ton coach</div><div style="font-size:12px;color:var(--muted);line-height:1.7;font-style:italic">${c.note_coach||'Aucune note.'}</div></div>
       <div class="card"><div style="font-size:12px;font-weight:500;margin-bottom:8px">Cycle actuel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--acc)">${c.cycle||'—'}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Semaine ${c.semaine||1} · Mois ${c.mois||1}</div></div>
-    </div>
-
-  `;
+    </div>`;
 }
 
-// =========== COACH ===========
+// ===== COACH =====
 function renderCoach(){
   document.getElementById('pgCoach').innerHTML=`
     <div class="pc">
@@ -743,7 +919,7 @@ async function saveCoachClient(i){
   loader(false); toast('✓ Modifications sauvegardées !');
 }
 
-// =========== BLUETOOTH ===========
+// ===== BLUETOOTH =====
 async function connectBT(){
   if(!navigator.bluetooth){alert('Web Bluetooth: utilise Chrome ou Edge desktop.');return;}
   const d=document.getElementById('btd'),l=document.getElementById('btl'),p=document.getElementById('btp');
