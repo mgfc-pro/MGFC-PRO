@@ -179,33 +179,6 @@ input[type=range]{flex:1;accent-color:var(--acc);width:auto}
 .cr-btns{display:flex;gap:8px}
 .cr-btn-wa{flex:1;background:#25D366;color:#fff;border:none;font-size:13px;font-weight:500;padding:13px;border-radius:10px}
 .cr-btn-back{background:var(--bg3);color:var(--muted);border:1px solid var(--border);font-size:13px;padding:13px 18px;border-radius:10px}
-
-/* CONSTRUCTEUR PROGRAMME */
-.prog-builder{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:400;overflow-y:auto;padding:20px}
-.pb-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:700px;margin:0 auto}
-.pb-title{font-family:'Bebas Neue',sans-serif;font-size:26px;margin-bottom:4px}
-.pb-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
-.pb-section{margin-bottom:18px}
-.pb-section-title{font-size:10px;color:var(--acc);text-transform:uppercase;letter-spacing:2px;font-weight:500;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.pb-exos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
-.pb-ex{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s;font-size:12px;color:var(--text);text-align:left}
-.pb-ex:hover{border-color:var(--acc);background:rgba(232,255,71,.04)}
-.pb-ex.sel{border-color:var(--acc);background:rgba(232,255,71,.08);color:var(--acc)}
-.pb-ex-num{font-size:9px;color:var(--muted);margin-bottom:3px}
-.pb-selected{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:16px;min-height:50px}
-.pb-selected-title{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.pb-sel-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.pb-sel-item:last-child{border-bottom:none}
-.pb-sel-rm{background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;padding:0 4px}
-.pb-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.pb-input-group label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px}
-.pb-btns{display:flex;gap:8px}
-.pb-btn-save{flex:1;background:var(--acc);color:#0a0a0a;border:none;font-size:13px;font-weight:500;padding:13px;border-radius:10px;cursor:pointer}
-.pb-btn-cancel{background:var(--bg3);color:var(--muted);border:1px solid var(--border);font-size:13px;padding:13px 18px;border-radius:10px;cursor:pointer}
-.new-session-btn{background:rgba(232,255,71,.08);border:1px dashed rgba(232,255,71,.3);color:var(--acc);font-size:12px;font-weight:500;padding:10px;border-radius:10px;width:100%;margin-top:8px;cursor:pointer;transition:.2s}
-.new-session-btn:hover{background:rgba(232,255,71,.15)}
-.del-session-btn{background:none;border:1px solid var(--border);color:var(--red);font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;margin-left:8px}
-
 </style>
 </head>
 <body>
@@ -282,7 +255,7 @@ async function sbDelete(table, id){
   return r.ok;
 }
 
-const COACH = {email:'thomas.lombard@sfr.fr', pwd:'mgfc2026coach', nom:'Lombard', prenom:'Thomas', initiale:'T', role:'coach'};
+const COACH = {email:'thomas.lombard@sfr.fr', pwd:'1201', nom:'Lombard', prenom:'Thomas', initiale:'T', role:'coach'};
 let CU=null, allClients=[], selSess=0;
 let livePhase='idle', liveExIdx=0, liveSet=0, liveSets=[], timerIv=null, timerSec=0, liveFC=80;
 let coachSelIdx=null, coachSessIdx=0, coachCache={};
@@ -340,7 +313,8 @@ async function doLogin(){
   const c=data[0];
   const expectedPwd = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+c.id.slice(0,4);
   const pwd2 = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+'123';
-  if(pwd!==expectedPwd && pwd!==pwd2){err.textContent='Mot de passe incorrect';return;}
+  const pwd3 = c.prenom.charAt(0).toUpperCase() + c.prenom.slice(1).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'') + '123';
+  if(pwd!==expectedPwd && pwd!==pwd2 && pwd!==pwd3){err.textContent='Mot de passe incorrect';return;}
   CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
   loader(true,'Chargement du programme...');
   const seances = await sbSelect('seances',{client_id:c.id},'ordre');
@@ -505,18 +479,48 @@ function startLive(){
 }
 
 const EX_GIFS = {
-  'développé couché':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWo3aHp6Y3dyNnBwdXYxMnV3dXhvdm5xb3BwY2t6Y2NhZzBtbGxiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlBO7eyXzSZkJri/giphy.gif',
-  'squat':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
-  'squats':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFiNTZxdWVqbzR5eTN6eTh4Nmg3aTkxdTZzaTl4bGZxMGpibWY2aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRuo6sLetdllPAQ/giphy.gif',
-  'fentes':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXl6ZGozemR5ZWh3MzA1dTVhYjNrbHBhY2RoZGJ6bGdtemoxamhsaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btT1T9qpQZWhNlK/giphy.gif',
-  'tractions':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBkcWpyaXh4dmNpcnl6dXgyanp3NTdtbHl5dXpwOGZsMXFvaWxvdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgG6zkXYFwHkHSo/giphy.gif',
-  'rowing':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE2OTd4dWF4ZWZkYmE5Mzc5ZHl2OXI2bnlhNjhwb3NuOHd0dGR0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
-  'soulevé de terre':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
-  'sdt':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzM5bDF3ZXRuaXVhamF4ZWM1aWlteGg1bGhtbHZqd3ZkMmVweG9sbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
-  'hip thrust':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
-  'montées de bassin':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnI3d3BmaXZlYWhkMzE4ZXdpZzA3aGhieGduYzFycHlra3UwdXdhbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlvtIPzPdt2usKs/giphy.gif',
-  'biceps':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWI4bHgxNm10dGNzcXlwNWR3NGM1eDhsZGJpaTFxbG9ia2RzZHJiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt4zBjOGmFkPSak/giphy.gif',
-  'triceps':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWM2aGlxNTNubW14ZnN5Mm5pZWh3dTdweWlod2dxNjhrdnQxdGI4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgxehCgl6OHV3eU/giphy.gif',
+  'fentes marchées':'https://media.giphy.com/media/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'fentes bulgares':'https://media.giphy.com/media/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'fentes':'https://media.giphy.com/media/3o7btT1T9qpQZWhNlK/giphy.gif',
+  'squat':'https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif',
+  'goblet squat':'https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif',
+  'squats':'https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif',
+  'standing leg curl':'https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
+  'prone leg curl':'https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
+  'leg curl':'https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif',
+  'soulevé de terre roumain':'https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif',
+  'soulevé de terre':'https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif',
+  'sdt':'https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif',
+  'good morning':'https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif',
+  'adducteur':'https://media.giphy.com/media/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'abducteur':'https://media.giphy.com/media/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'hip thrust':'https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif',
+  'montée de bassin':'https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif',
+  'montées de bassin':'https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif',
+  'rear kick':'https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif',
+  'total hip':'https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif',
+  'développé couché':'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',
+  'développé incliné':'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',
+  'développé militaire':'https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif',
+  'développé prise serrée':'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',
+  'rowing barre':'https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif',
+  'rowing haltère':'https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif',
+  'rowing avec appui':'https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif',
+  'rowing':'https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif',
+  'élévations latérales':'https://media.giphy.com/media/xT9IgxPCT5HSJG97nO/giphy.gif',
+  'elevation laterale':'https://media.giphy.com/media/xT9IgxPCT5HSJG97nO/giphy.gif',
+  'tractions':'https://media.giphy.com/media/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'chin-up':'https://media.giphy.com/media/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'tirage':'https://media.giphy.com/media/xT9IgG6zkXYFwHkHSo/giphy.gif',
+  'dips':'https://media.giphy.com/media/xT9IgxehCgl6OHV3eU/giphy.gif',
+  'biceps haltère':'https://media.giphy.com/media/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'biceps':'https://media.giphy.com/media/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'curl':'https://media.giphy.com/media/3o6Zt4zBjOGmFkPSak/giphy.gif',
+  'triceps':'https://media.giphy.com/media/xT9IgxehCgl6OHV3eU/giphy.gif',
+  'abdo':'https://media.giphy.com/media/xT9IgzbnGJMsVWMSFe/giphy.gif',
+  'crunch':'https://media.giphy.com/media/xT9IgzbnGJMsVWMSFe/giphy.gif',
+  'gainage':'https://media.giphy.com/media/xT9IgzbnGJMsVWMSFe/giphy.gif',
+  'relevé de jambes':'https://media.giphy.com/media/xT9IgzbnGJMsVWMSFe/giphy.gif',
 };
 
 function getExGif(nom){
@@ -892,7 +896,6 @@ function renderCoachEdit(i){
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <select class="ssel" style="width:auto;font-size:11px" onchange="coachSessIdx=+this.value;renderCoachSessEdit(${i})">${opts}</select>
           <button class="savebtn" onclick="saveCoachClient(${i})">✓ Sauvegarder</button>
-          <button style="background:rgba(232,255,71,.1);border:1px solid rgba(232,255,71,.3);color:var(--acc);font-size:12px;font-weight:500;padding:9px 14px;border-radius:9px;cursor:pointer" onclick="showProgBuilder(${i})">+ Nouvelle séance</button>
         </div>
       </div>
       <div id="csrows"></div>
@@ -945,203 +948,6 @@ async function saveCoachClient(i){
   c.note_coach=note;
   for(const ex of sexos) await sbUpdate('exercices',ex.id,{nom:ex.nom,series:ex.series,repetitions:ex.repetitions,charge:ex.charge});
   loader(false); toast('✓ Modifications sauvegardées !');
-}
-
-
-// ===== BIBLIOTHEQUE EXERCICES MGFC =====
-const EX_LIBRARY = {
-  'Bas du corps': [
-    {nom:'Fentes marchées', muscle:'Quadriceps / Fessiers'},
-    {nom:'Fentes bulgares', muscle:'Quadriceps / Fessiers'},
-    {nom:'Squat', muscle:'Quadriceps / Ischio'},
-    {nom:'Goblet squat', muscle:'Quadriceps / Fessiers'},
-    {nom:'Standing leg curl', muscle:'Ischio-jambiers'},
-    {nom:'Prone leg curl', muscle:'Ischio-jambiers'},
-    {nom:'Soulevé de terre roumain', muscle:'Ischio / Fessiers'},
-    {nom:'Good morning', muscle:'Ischio / Lombaires'},
-    {nom:'Adducteur machine', muscle:'Adducteurs'},
-    {nom:'Abducteur machine', muscle:'Abducteurs'},
-    {nom:'Soulevé de terre', muscle:'Ischio / Dos / Fessiers'},
-    {nom:'Rear kick machine', muscle:'Fessiers'},
-    {nom:'Total hip machine', muscle:'Fessiers'},
-    {nom:'Hip thrust (montée de bassin)', muscle:'Fessiers'},
-  ],
-  'Haut du corps': [
-    {nom:'Développé couché', muscle:'Pectoraux'},
-    {nom:'Développé incliné', muscle:'Pectoraux haut'},
-    {nom:'Rowing barre', muscle:'Dos / Biceps'},
-    {nom:'Rowing haltère', muscle:'Dos / Biceps'},
-    {nom:'Développé militaire', muscle:'Épaules'},
-    {nom:'Élévations latérales', muscle:'Épaules'},
-    {nom:'Tractions pronation', muscle:'Dos / Biceps'},
-    {nom:'Chin-up prise neutre', muscle:'Dos / Biceps'},
-    {nom:'Dips', muscle:'Triceps / Pectoraux'},
-    {nom:'Biceps haltère', muscle:'Biceps'},
-    {nom:'Développé prise serrée', muscle:'Triceps / Pectoraux'},
-    {nom:'Rowing avec appui sternal', muscle:'Dos / Biceps'},
-  ],
-  'Cardio / Abdos': [
-    {nom:'Tapis de course', muscle:'Cardio'},
-    {nom:'Vélo elliptique', muscle:'Cardio'},
-    {nom:'Rameur', muscle:'Cardio / Dos'},
-    {nom:'Corde à sauter', muscle:'Cardio'},
-    {nom:'Crunch', muscle:'Abdominaux'},
-    {nom:'Gainage planche', muscle:'Abdominaux / Core'},
-    {nom:'Relevé de jambes', muscle:'Abdominaux bas'},
-  ]
-};
-
-
-// ===== CONSTRUCTEUR DE PROGRAMME =====
-let pbSelectedExos = [];
-let pbClientIdx = null;
-
-function showProgBuilder(clientIdx) {
-  pbClientIdx = clientIdx;
-  pbSelectedExos = [];
-  const c = allClients[clientIdx];
-  const palH = c.palier_haut || Math.round(c.fc_max * .8);
-  const palB = c.palier_bas || Math.round(c.fc_max * .6);
-
-  let sectionsHtml = '';
-  for (const [cat, exos] of Object.entries(EX_LIBRARY)) {
-    sectionsHtml += `<div class="pb-section">
-      <div class="pb-section-title">${cat}</div>
-      <div class="pb-exos">
-        ${exos.map((ex, i) => `
-          <div class="pb-ex" id="pbex-${cat.replace(/\s/g,'_')}-${i}" onclick="togglePbEx(${JSON.stringify(ex).replace(/"/g,'&quot;')}, 'pbex-${cat.replace(/\s/g,'_')}-${i}')">
-            <div class="pb-ex-num">${ex.muscle}</div>
-            ${ex.nom}
-          </div>`).join('')}
-      </div>
-    </div>`;
-  }
-
-  const modal = document.createElement('div');
-  modal.className = 'prog-builder';
-  modal.id = 'progBuilder';
-  modal.innerHTML = `
-    <div class="pb-wrap">
-      <div class="pb-title">Nouveau Programme</div>
-      <div class="pb-sub">${c.prenom} ${c.nom} · FC max ${c.fc_max} bpm · Stop ${palH} · Reprendre ${palB}</div>
-      
-      <div class="pb-inputs">
-        <div class="pb-input-group">
-          <label>Nom de la séance</label>
-          <input type="text" id="pbNom" placeholder="Ex: Bas du corps" style="width:100%">
-        </div>
-        <div class="pb-input-group">
-          <label>Jour</label>
-          <input type="text" id="pbJour" placeholder="Ex: Lundi" style="width:100%">
-        </div>
-      </div>
-
-      <div class="pb-selected">
-        <div class="pb-selected-title">Exercices sélectionnés (<span id="pbCount">0</span>)</div>
-        <div id="pbSelList"><span style="font-size:12px;color:var(--muted)">Clique sur les exercices ci-dessous pour les ajouter</span></div>
-      </div>
-
-      ${sectionsHtml}
-
-      <div class="pb-btns" style="margin-top:20px">
-        <button class="pb-btn-cancel" onclick="document.getElementById('progBuilder').remove()">Annuler</button>
-        <button class="pb-btn-save" onclick="saveProgramme()">✓ Créer la séance</button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-}
-
-function togglePbEx(ex, elId) {
-  const el = document.getElementById(elId);
-  const idx = pbSelectedExos.findIndex(e => e.nom === ex.nom);
-  if (idx === -1) {
-    pbSelectedExos.push(ex);
-    el.classList.add('sel');
-  } else {
-    pbSelectedExos.splice(idx, 1);
-    el.classList.remove('sel');
-  }
-  renderPbSelected();
-}
-
-function renderPbSelected() {
-  document.getElementById('pbCount').textContent = pbSelectedExos.length;
-  document.getElementById('pbSelList').innerHTML = pbSelectedExos.length === 0
-    ? '<span style="font-size:12px;color:var(--muted)">Aucun exercice sélectionné</span>'
-    : pbSelectedExos.map((ex, i) => `
-      <div class="pb-sel-item">
-        <span>${i+1}. ${ex.nom} <span style="font-size:10px;color:var(--muted)">— ${ex.muscle}</span></span>
-        <button class="pb-sel-rm" onclick="removePbEx(${i})">✕</button>
-      </div>`).join('');
-}
-
-function removePbEx(idx) {
-  pbSelectedExos.splice(idx, 1);
-  renderPbSelected();
-  // Désélectionner visuellement tous et re-sélectionner les restants
-  document.querySelectorAll('.pb-ex').forEach(el => el.classList.remove('sel'));
-  for (const [cat, exos] of Object.entries(EX_LIBRARY)) {
-    exos.forEach((ex, i) => {
-      if (pbSelectedExos.find(e => e.nom === ex.nom)) {
-        const el = document.getElementById('pbex-' + cat.replace(/\s/g,'_') + '-' + i);
-        if (el) el.classList.add('sel');
-      }
-    });
-  }
-}
-
-async function saveProgramme() {
-  const nom = document.getElementById('pbNom').value.trim();
-  const jour = document.getElementById('pbJour').value.trim();
-  if (!nom) { toast('Donne un nom à la séance'); return; }
-  if (!pbSelectedExos.length) { toast('Sélectionne au moins un exercice'); return; }
-  const c = allClients[pbClientIdx];
-  const palH = c.palier_haut || Math.round(c.fc_max * .8);
-  const palB = c.palier_bas || Math.round(c.fc_max * .6);
-  
-  loader(true, 'Création de la séance...');
-  
-  // Récupérer le nombre de séances existantes pour l'ordre
-  const existingSeances = await sbSelect('seances', {client_id: c.id}, 'ordre');
-  const nextOrdre = (existingSeances||[]).length + 1;
-  
-  // Créer la séance
-  const seanceRes = await sbInsert('seances', {
-    client_id: c.id,
-    ordre: nextOrdre,
-    jour: jour || ('Jour ' + nextOrdre),
-    nom: nom,
-    type: 'muscu',
-    icone: ''
-  });
-  
-  if (!seanceRes || seanceRes.error) {
-    loader(false);
-    toast('Erreur création séance');
-    return;
-  }
-  
-  const seanceId = seanceRes[0]?.id || seanceRes.id;
-  
-  // Créer les exercices
-  const noteDefaut = 'Stop ' + palH + ' bpm - Reprendre ' + palB + ' bpm';
-  for (let i = 0; i < pbSelectedExos.length; i++) {
-    await sbInsert('exercices', {
-      seance_id: seanceId,
-      ordre: i + 1,
-      nom: pbSelectedExos[i].nom,
-      icone: '',
-      series: 3,
-      repetitions: '15',
-      charge: '',
-      note: noteDefaut
-    });
-  }
-  
-  loader(false);
-  document.getElementById('progBuilder').remove();
-  toast('✓ Séance créée — ' + pbSelectedExos.length + ' exercices');
-  await selCoachClient(pbClientIdx);
 }
 
 // ===== BLUETOOTH =====
