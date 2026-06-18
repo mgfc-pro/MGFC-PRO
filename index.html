@@ -313,7 +313,8 @@ async function doLogin(){
   const c=data[0];
   const expectedPwd = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+c.id.slice(0,4);
   const pwd2 = c.prenom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'')+'123';
-  if(pwd!==expectedPwd && pwd!==pwd2){err.textContent='Mot de passe incorrect';return;}
+  const pwd3 = c.prenom.charAt(0).toUpperCase() + c.prenom.slice(1).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s/g,'') + '123';
+  if(pwd!==expectedPwd && pwd!==pwd2 && pwd!==pwd3){err.textContent='Mot de passe incorrect';return;}
   CU={...c, role:'client', initiale:c.prenom[0].toUpperCase()};
   loader(true,'Chargement du programme...');
   const seances = await sbSelect('seances',{client_id:c.id},'ordre');
