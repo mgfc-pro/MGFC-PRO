@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formules d'accompagnement — Méthode MGFC | TomPulse</title>
+<meta name="description" content="Coaching personnalisé avec la méthode MGFC. 3 formules d'accompagnement pour perdre du poids durablement grâce au cardiofréquencemètre.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f7; color: #1a1a1a; }
+
+  /* NAV */
+  nav { background: #0A0A0A; padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #1a1a1a; }
+  .nav-logo { color: #F5C518; font-size: 18px; font-weight: 700; letter-spacing: 1px; text-decoration: none; }
+  .nav-logo span { color: #fff; }
+  .nav-cta { background: #F5C518; color: #0A0A0A; font-size: 13px; font-weight: 700; padding: 8px 18px; border-radius: 6px; text-decoration: none; }
+
+  /* HERO */
+  .hero { background: #0A0A0A; padding: 80px 32px 64px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #F5C518; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: #F5C518; }
+  .hero-badge { display: inline-block; background: #1A1A1A; border: 1px solid #333; color: #F5C518; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 28px; }
+  .hero h1 { color: #fff; font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+  .hero h1 em { color: #F5C518; font-style: normal; }
+  .hero-sub { color: #888; font-size: clamp(14px, 2vw, 17px); line-height: 1.7; max-width: 540px; margin: 0 auto 40px; }
+  .stats { display: flex; justify-content: center; gap: clamp(20px, 4vw, 48px); flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-n { color: #F5C518; font-size: clamp(22px, 3vw, 32px); font-weight: 800; }
+  .stat-l { color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* SECTIONS */
+  .section { padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 48px); }
+  .section-inner { max-width: 860px; margin: 0 auto; }
+  .section-tag { text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #F5C518; margin-bottom: 8px; font-weight: 600; }
+  .section-h { text-align: center; font-size: clamp(20px, 3vw, 30px); font-weight: 700; color: #1a1a1a; margin-bottom: 48px; }
+
+  /* OFFRES */
+  .offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .offer { background: #fff; border: 1px solid #e8e8e4; border-radius: 16px; padding: 32px 28px; position: relative; transition: box-shadow 0.2s, transform 0.2s; }
+  .offer:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .offer.featured { border: 2px solid #F5C518; }
+  .badge-pop { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #F5C518; color: #0A0A0A; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 5px 16px; border-radius: 20px; white-space: nowrap; }
+  .offer-duration { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #F5C518; margin-bottom: 10px; font-weight: 700; }
+  .offer-price { font-size: 44px; font-weight: 800; color: #0A0A0A; line-height: 1; }
+  .offer-price sup { font-size: 20px; vertical-align: super; }
+  .offer-pm { font-size: 13px; color: #888; margin: 6px 0 4px; }
+  .offer-economy { font-size: 12px; color: #2a9d2a; font-weight: 600; margin-bottom: 24px; }
+  .offer-divider { height: 1px; background: #f0f0ec; margin-bottom: 24px; }
+  .offer-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .offer-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: #444; line-height: 1.4; }
+  .offer-features li::before { content: '✓'; color: #F5C518; font-weight: 800; flex-shrink: 0; font-size: 15px; }
+  .offer-features li.extra::before { content: '★'; color: #F5C518; }
+  .offer-cta { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; letter-spacing: 0.3px; transition: all 0.2s; text-decoration: none; display: block; text-align: center; }
+  .offer-cta.primary { background: #F5C518; color: #0A0A0A; }
+  .offer-cta.primary:hover { background: #e6b800; transform: scale(1.01); }
+  .offer-cta.secondary { background: transparent; border: 1.5px solid #ddd; color: #333; }
+  .offer-cta.secondary:hover { background: #f5f5f0; border-color: #bbb; }
+
+  /* POURQUOI */
+  .why { background: #0A0A0A; padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 48px); }
+  .why .section-h { color: #fff; }
+  .why .section-tag { color: #F5C518; }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; max-width: 860px; margin: 0 auto; }
+  .why-card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 24px 20px; }
+  .why-icon { font-size: 28px; margin-bottom: 14px; }
+  .why-h { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .why-p { font-size: 13px; color: #777; line-height: 1.6; }
+
+  /* RESULTATS */
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; max-width: 860px; margin: 0 auto; }
+  .result-card { background: #fff; border: 1px solid #e8e8e4; border-radius: 12px; padding: 20px 16px; text-align: center; }
+  .result-name { font-size: 13px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .result-n { font-size: 30px; font-weight: 800; color: #F5C518; line-height: 1; }
+  .result-detail { font-size: 12px; color: #888; margin-top: 4px; }
+
+  /* TEMOIGNAGES */
+  .testimonials { background: #f0f0ec; padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 48px); }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 860px; margin: 0 auto; }
+  .testi-card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8e8e4; }
+  .testi-stars { color: #F5C518; font-size: 16px; margin-bottom: 12px; }
+  .testi-text { font-size: 14px; color: #444; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+  .testi-author { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .testi-result { font-size: 12px; color: #F5C518; font-weight: 600; }
+
+  /* CTA FINAL */
+  .cta-final { background: #F5C518; padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 48px); text-align: center; }
+  .cta-final h2 { font-size: clamp(22px, 3vw, 34px); font-weight: 800; color: #0A0A0A; margin-bottom: 12px; }
+  .cta-final p { font-size: 16px; color: #333; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .cta-final-btn { display: inline-block; background: #0A0A0A; color: #F5C518; font-size: 16px; font-weight: 700; padding: 16px 40px; border-radius: 10px; text-decoration: none; letter-spacing: 0.3px; transition: transform 0.2s; }
+  .cta-final-btn:hover { transform: scale(1.02); }
+  .cta-note { font-size: 13px; color: #555; margin-top: 16px; }
+
+  /* FOOTER */
+  footer { background: #0A0A0A; padding: 32px; text-align: center; }
+  footer p { color: #444; font-size: 13px; }
+  footer a { color: #F5C518; text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .stats { gap: 24px; }
+    .offers { grid-template-columns: 1fr; }
+    nav { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://tompulse.fr" class="nav-logo">Tom<span>Pulse</span></a>
+  <a href="https://calendly.com/tomcoaching31" class="nav-cta">Bilan offert →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Méthode MGFC · Coaching personnalisé</div>
+  <h1>Vous ne manquez<br>pas de <em>volonté</em></h1>
+  <p class="hero-sub">La méthode qui a permis à plus de 200 personnes de perdre 8 à 20 kg — sans régime draconien, sans cardio extrême, en travaillant à la bonne intensité.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">+200</div><div class="stat-l">clients accompagnés</div></div>
+    <div class="stat"><div class="stat-n">16 ans</div><div class="stat-l">de coaching</div></div>
+    <div class="stat"><div class="stat-n">-100 kg</div><div class="stat-l">record Laurent</div></div>
+  </div>
+</section>
+
+<!-- OFFRES -->
+<section class="section" style="background:#f9f9f7;">
+  <div class="section-inner">
+    <div class="section-tag">Formules d'accompagnement</div>
+    <h2 class="section-h">Choisissez votre programme</h2>
+    <div class="offers">
+
+      <div class="offer">
+        <div class="offer-duration">3 mois</div>
+        <div class="offer-price"><sup>€</sup>900</div>
+        <div class="offer-pm">300 € / mois</div>
+        <div class="offer-economy">&nbsp;</div>
+        <div class="offer-divider"></div>
+        <ul class="offer-features">
+          <li>Programme personnalisé chaque mois</li>
+          <li>Suivi des courbes après chaque séance</li>
+          <li>Accès vidéos techniques des exercices</li>
+          <li>1 rendez-vous visio par mois</li>
+          <li>Réajustements en continu</li>
+        </ul>
+        <a href="https://calendly.com/tomcoaching31" class="offer-cta secondary">Je démarre →</a>
+      </div>
+
+      <div class="offer featured">
+        <div class="badge-pop">⚡ Le plus choisi</div>
+        <div class="offer-duration">6 mois</div>
+        <div class="offer-price"><sup>€</sup>1 500</div>
+        <div class="offer-pm">250 € / mois</div>
+        <div class="offer-economy">Économisez 300 € vs formule 3 mois</div>
+        <div class="offer-divider"></div>
+        <ul class="offer-features">
+          <li>Programme personnalisé chaque mois</li>
+          <li>Suivi des courbes après chaque séance</li>
+          <li>Accès vidéos techniques des exercices</li>
+          <li>1 rendez-vous visio par mois</li>
+          <li>Réajustements en continu</li>
+          <li class="extra">Cyclisation avancée du programme</li>
+        </ul>
+        <a href="https://calendly.com/tomcoaching31" class="offer-cta primary">Je démarre →</a>
+      </div>
+
+      <div class="offer">
+        <div class="offer-duration">12 mois</div>
+        <div class="offer-price"><sup>€</sup>2 000</div>
+        <div class="offer-pm">167 € / mois</div>
+        <div class="offer-economy">Économisez 1 600 € vs formule 3 mois</div>
+        <div class="offer-divider"></div>
+        <ul class="offer-features">
+          <li>Programme personnalisé chaque mois</li>
+          <li>Suivi des courbes après chaque séance</li>
+          <li>Accès vidéos techniques des exercices</li>
+          <li>1 rendez-vous visio par mois</li>
+          <li>Réajustements en continu</li>
+          <li class="extra">Cyclisation avancée du programme</li>
+          <li class="extra">Suivi nutrition personnalisé</li>
+        </ul>
+        <a href="https://calendly.com/tomcoaching31" class="offer-cta secondary">Je démarre →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- POURQUOI -->
+<section class="why">
+  <div class="section-tag">Pourquoi ça marche</div>
+  <h2 class="section-h" style="color:#fff; margin-bottom:32px;">La méthode MGFC en 4 points</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">💓</div>
+      <div class="why-h">Intensité guidée par la FC</div>
+      <div class="why-p">Le cardiofréquencemètre cible la bonne zone à chaque série. Fini le ronronnement confortable qui ne brûle rien.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📊</div>
+      <div class="why-h">Suivi après chaque séance</div>
+      <div class="why-p">Vos courbes sont analysées en temps réel. Le programme évolue avec votre progression, sans attendre le rendez-vous mensuel.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🏋️</div>
+      <div class="why-h">Musculation avant tout</div>
+      <div class="why-p">La musculation brûle 3 à 5x plus que le cardio seul. Le moteur reste allumé des heures après la séance.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🥗</div>
+      <div class="why-h">Nutrition sans privation</div>
+      <div class="why-p">Pas de régime draconien. Des règles simples et applicables qui respectent votre vie sociale.</div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTATS -->
+<section class="section" style="background:#f9f9f7;">
+  <div class="section-inner">
+    <div class="section-tag">Ils l'ont fait</div>
+    <h2 class="section-h">Résultats réels de clients accompagnés</h2>
+    <div class="results-grid">
+      <div class="result-card"><div class="result-name">Tanguy</div><div class="result-n">-18 kg</div><div class="result-detail">en 3 mois</div></div>
+      <div class="result-card"><div class="result-name">David</div><div class="result-n">-17,5 kg</div><div class="result-detail">en 3 mois</div></div>
+      <div class="result-card"><div class="result-name">Jessika</div><div class="result-n">-25 kg</div><div class="result-detail">en 1 an</div></div>
+      <div class="result-card"><div class="result-name">Sandrine</div><div class="result-n">-20 kg</div><div class="result-detail">en 8 mois</div></div>
+      <div class="result-card"><div class="result-name">Laurent</div><div class="result-n">-100 kg</div><div class="result-detail">en 3 ans</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMOIGNAGES -->
+<section class="testimonials">
+  <div class="section-inner">
+    <div class="section-tag">Témoignages</div>
+    <h2 class="section-h">Ce qu'ils en disent</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« Je n'avais jamais réussi à tenir plus de 2 mois. Avec Thomas et le cardiofréquencemètre, j'ai enfin compris pourquoi je n'avançais pas. Les résultats ont suivi naturellement. »</p>
+        <div class="testi-author">Sandrine G.</div>
+        <div class="testi-result">-20 kg en 8 mois</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« J'ai perdu 18 kg en 3 mois sans me priver. La méthode MGFC, c'est de la science appliquée. Thomas adapte le programme chaque mois, c'est vraiment du sur-mesure. »</p>
+        <div class="testi-author">Tanguy M.</div>
+        <div class="testi-result">-18 kg en 3 mois</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« Après des années de régimes en yoyo, j'ai enfin perdu du poids de façon durable. Thomas voit mes courbes après chaque séance et ajuste en temps réel. »</p>
+        <div class="testi-author">Jessika L.</div>
+        <div class="testi-result">-25 kg en 1 an</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Prêt à commencer ?</h2>
+  <p>Réservez votre bilan offert — 30 minutes pour définir votre programme personnalisé et vos objectifs.</p>
+  <a href="https://calendly.com/tomcoaching31" class="cta-final-btn">Réserver mon bilan offert →</a>
+  <p class="cta-note">Gratuit · Sans engagement · 30 minutes</p>
+</section>
+
+<footer>
+  <p>© 2026 TomPulse · Thomas Lombard · <a href="https://tompulse.fr">tompulse.fr</a> · <a href="mailto:contact@tompulse.fr">contact@tompulse.fr</a></p>
+</footer>
+
+</body>
+</html>
